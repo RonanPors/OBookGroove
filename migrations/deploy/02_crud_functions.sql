@@ -78,7 +78,7 @@ CREATE FUNCTION "update_user"(json) RETURNS "user" AS $$
     "pseudo" = COALESCE($1->>'pseudo', "pseudo"),
     "email" = COALESCE($1->>'email', "email"),
     "password" = COALESCE($1->>'password', "password"),
-    "last_login" = COALESCE($1->>'last_login', "last_login"),
+    "last_login" = COALESCE(($1->>'last_login')::TIMESTAMPTZ, "last_login"),
     "phone_number" = COALESCE($1->>'phone_number', "phone_number"),
     "profile_picture" = COALESCE($1->>'profile_picture', "profile_picture"),
     "updated_at" = now()
