@@ -11,3 +11,12 @@ Content-Type: application/json
   "password": "password",
   "confirmPassword": "password"
 }
+
+### Connexion d'un utilisateur O'Book Groove
+POST {{endpoint}}/auth/signin
+Content-Type: application/json
+
+{
+  "email": "max@oclock.io2",
+  "password": "superpass"
+}

@@ -54,4 +54,35 @@ export default {
 
   },
 
+  async signin(req, res) {
+
+    try {
+
+      const { email, password } = req.body;
+
+      // Vérifier si l'email existe
+      const user = await userDatamapper.findByEmail(email);
+      if(!user) throw new Error('Error signin.');
+
+      // Vérifier si le mot de passe est correct
+      const isValidPassword = await bcrypt.compare(password, user.password);
+      if(!isValidPassword) throw new Error('Error signin.');
+
+      // Génération des deux tokens (access & refresh)
+      const response = {
+        accessToken: createAccessToken(user),
+        tokenType: 'Bearer',
+        refreshToken: createRefreshToken(user),
+      };
+
+      // Retourner les deux tokens ici
+      return res.json(response);
+
+    } catch (err) {
+      console.error(err);
+      return res.json({ error: err.message });
+    }
+
+  },
+
 };
