@@ -6,8 +6,8 @@
   "main": "server.js",
   "scripts": {
     "resetDB": "sqitch revert -y; sqitch deploy; node ./data/seeding.js",
-    "dev": "NODE_ENV=development node --watch index.js",
-    "start": "NODE_ENV=production node index.js"
+    "dev": "NODE_ENV=development node --watch sever.js",
+    "start": "NODE_ENV=production node server.js"
   },
   "keywords": [],
   "author": "",
