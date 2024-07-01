@@ -13,8 +13,5 @@ export default Joi.object({
     .pattern(new RegExp('(?=.*[0-9])'))
     // Doit contenir au moins un caractère spécial
     .pattern(new RegExp('(?=.*[!@#$%^&*])'))
-    .required()
-    .messages({
-      'password.pattern': 'Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial.',
-      'password.min': 'Le mot de passe doit contenir au moins 8 caractères.'}),
-}).required().message({'missing.data':'Aucune donnée n\'a été renseignée'});
+    .required(),
+}).required();

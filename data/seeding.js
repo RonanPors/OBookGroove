@@ -24,21 +24,21 @@ async function insertUsers() {
     (
         'Max',
         'max@oclock.io',
-        '$2b$10$h4Dh2fRGAf4YdC.Cqg1yleq41QHmG61B76THHCp03SgMEizvZlscy',
+        '$2b$12$bZaufSjg9KLuV9b0qqt6/.Uo97.uHF95k2TYQnZDDK8eLOfzXq.2i',
         'refresh_token'
-    ),-- superpass
+    ),-- Antestdefou3*
     (
         'Arnaud',
         'arnaud@oclock.io',
-        '$2b$10$h4Dh2fRGAf4YdC.Cqg1yleq41QHmG61B76THHCp03SgMEizvZlscy',
+        '$2b$12$bZaufSjg9KLuV9b0qqt6/.Uo97.uHF95k2TYQnZDDK8eLOfzXq.2i',
         'refresh_token'
-    ), -- superpass
+    ), -- Antestdefou3*
     (
         'Ronane',
         'ronane@oclock.io',
-        '$2b$10$h4Dh2fRGAf4YdC.Cqg1yleq41QHmG61B76THHCp03SgMEizvZlscy',
+        '$2b$12$bZaufSjg9KLuV9b0qqt6/.Uo97.uHF95k2TYQnZDDK8eLOfzXq.2i',
         'refresh_token'
-    ) -- superpass
+    ) -- Antestdefou3*
     RETURNING id
   `;
 
