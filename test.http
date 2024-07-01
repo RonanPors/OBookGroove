@@ -1,14 +1,13 @@
 @endpoint=http://localhost:{{$dotenv PORT}}
 
 ### Création d'un utilisateur O'Book Groove
+
 POST {{endpoint}}/auth/signup
 Content-Type: application/json
 
 {
-  
-  "email":"toto@gmail.com",
-  "pseudo":"Toto29",
-  "password":"testMDP",
-  "confirm_password":"testMDP"
-
+  "pseudo": "Mix",
+  "email": "mix@oclock.io",
+  "password": "password",
+  "confirmPassword": "password"
 }

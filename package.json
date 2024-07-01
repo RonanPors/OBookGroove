@@ -5,18 +5,21 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "resetDB": "sqitch revert -y; sqitch deploy; node ./data/seeding.js",
-    "dev": "NODE_ENV=development node --watch sever.js",
-    "start": "NODE_ENV=production node server.js"
+    "start": "NODE_ENV=production node .",
+    "dev": "NODE_ENV=development node --watch server.js",
+    "resetDB": "sqitch revert -y; sqitch deploy; node ./data/seeding.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
     "knex": "^3.1.0",
-    "pg": "^8.12.0"
+    "pg": "^8.12.0",
+    "pino-http": "^10.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.5.0",
