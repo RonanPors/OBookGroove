@@ -17,6 +17,6 @@ POST {{endpoint}}/auth/signin
 Content-Type: application/json
 
 {
-  "email": "max@oclock.io2",
+  "email": "max@oclock.io",
   "password": "superpass"
 }

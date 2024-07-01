@@ -34,15 +34,21 @@ export default {
         password: await bcrypt.hash(password, salt),
       });
 
-      // Vérifier si l'utilisateur a bien été créé
-      if (!user) throw new Error('Error signup.');
-
       // Génération des deux tokens (access & refresh)
       const response = {
         accessToken: createAccessToken(user),
         tokenType: 'Bearer',
         refreshToken: createRefreshToken(user),
       };
+
+      // Mise à jour du refresh token de l'utilisateur
+      await userDatamapper.update({
+        id: user.id,
+        refresh_token: response.refreshToken,
+      });
+
+      // Vérifier si l'utilisateur a bien été créé
+      if (!user) throw new Error('Error signup.');
 
       // Retourner les deux tokens ici
       return res.json(response);
@@ -74,6 +80,14 @@ export default {
         tokenType: 'Bearer',
         refreshToken: createRefreshToken(user),
       };
+
+      // Mettre à jour le refresh token
+      // Ceci mettra aussi à jour le login
+      await userDatamapper.update({
+        id: user.id,
+        last_login: true,
+        refresh_token: response.refreshToken,
+      });
 
       // Retourner les deux tokens ici
       return res.json(response);
