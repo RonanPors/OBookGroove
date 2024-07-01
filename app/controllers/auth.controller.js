@@ -12,7 +12,7 @@ export default {
         pseudo,
         email,
         password,
-        confirmPassword
+        confirmPassword,
       } = req.body;
 
       // Vérifier si les deux mots de passe sont les mêmes
@@ -52,6 +52,6 @@ export default {
       return res.json({ error: err.message });
     }
 
-  }
+  },
 
 };

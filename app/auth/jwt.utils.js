@@ -5,7 +5,7 @@ const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
 
 /**
  * Générer un Access Token valide et signé
- * @param {object} user - Objet user contenant les informations de l'utilisateur 
+ * @param {object} user - Objet user contenant les informations de l'utilisateur
  * @returns - JWT valide et signé
  */
 export const createAccessToken = ({ id }) => jwt.sign({
@@ -17,7 +17,7 @@ export const createAccessToken = ({ id }) => jwt.sign({
 
 /**
  * Générer un Refresh Token valide et signé
- * @param {object} user - Objet user contenant les informations de l'utilisateur 
+ * @param {object} user - Objet user contenant les informations de l'utilisateur
  * @returns - JWT valide et signé
  */
 export const createRefreshToken = ({ id }) => jwt.sign({
@@ -35,7 +35,7 @@ export const createRefreshToken = ({ id }) => jwt.sign({
 function checkExpirationToken(token) {
 
   const tokenExp = token.exp;
-  const nowInSec = (Math.floor(Data.now()) / 1000);
+  const nowInSec = (Math.floor(Date.now()) / 1000);
 
   // Si le token est expiré
   if (nowInSec > tokenExp) return null;
@@ -44,6 +44,11 @@ function checkExpirationToken(token) {
   return token;
 }
 
+/**
+ * Vérification de la validation et de l'expiration du refresh token de l'utilisateur
+ * @param {*} refreshToken - refresh token
+ * @returns
+ */
 function checkRefreshTokenValidity(refreshToken) {
 
   // Vérifier si le token de refresh est valide ET non expiré
@@ -61,17 +66,20 @@ function checkRefreshTokenValidity(refreshToken) {
 
 }
 
+/**
+ * Vérification de la validation et de l'expiration du token d'accès de l'utilisateur
+ * @param {object} accessToken - Token d'accès de l'utilisateur
+ * @returns
+ */
 export function checkAccessTokenValidity(accessToken) {
 
   // Vérifier seulement si le token d'accès est valide ou non
   const decodedAccessToken = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
 
+  // Retourne null si le token d'accès est valide mais expiré
   if (!decodedAccessToken) return null;
 
-  // Retourne null si le token d'accès est valide mais expiré
-  //! Pourquoi ?
-  //! Car ce MW sert simplement à vérifier et non à regénérer
-  //! Pour regénérer des tokens, il faudra effectuer une requête spécialement pour ça
+  // Retourne le token décodé s'il est valide et non expiré
   return decodedAccessToken;
 
 }
