@@ -1,10 +1,16 @@
 import { Router } from 'express';
 import authController from '../controllers/auth.controller.js';
 
+// Importation des schemas de validation des données
+import userCreateSchema from '../schemas/Joi/user.create.schema.js';
+import userAuthSchema from '../schemas/Joi/user.auth.schema.js';
+// Importation du middleware de validation des données
+import validationMiddleware from '../middlewares/validation.middleware.js';
+
 const router = Router();
 
-router.post('/auth/signup', authController.signup);
+router.post('/auth/signup', validationMiddleware(userCreateSchema, 'body'), authController.signup);
 
-router.post('/auth/signin', authController.signin);
+router.post('/auth/signin', validationMiddleware(userAuthSchema, 'body'), authController.signin);
 
 export default router;
