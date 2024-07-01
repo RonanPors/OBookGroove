@@ -31,7 +31,7 @@ class CoreDatamapper {
 
     const rows = await this.client.from(this.tableName);
 
-    if (params?.where) query.where(params.where);
+    if (params?.where) rows.where(params.where);
 
     return rows;
 
