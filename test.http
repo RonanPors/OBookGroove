@@ -6,8 +6,8 @@ POST {{endpoint}}/auth/signup
 Content-Type: application/json
 
 {
-  "pseudo": "Mix",
-  "email": "mix@oclock.io",
+  "pseudo": "Mex",
+  "email": "mex@oclock.io",
   "password": "Antestdefou3*",
   "confirmPassword": "Antestdefou3*"
 }
@@ -18,5 +18,14 @@ Content-Type: application/json
 
 {
   "email": "max@oclock.io",
-  "password": "superpass"
+  "password": "Antestdefou3*"
+}
+
+### Génération de tokens pour un utilisateur O'Book Groove
+POST {{endpoint}}/auth/generate
+Content-Type: application/json
+
+{
+  "accessToken": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGFpbXMiOnsic3ViIjoxLCJmaW5nZXJwcmludCI6eyJpcCI6Ijo6ZmZmZjoxMjcuMC4wLjEiLCJ1c2VyQWdlbnQiOiJ2c2NvZGUtcmVzdGNsaWVudCJ9fSwiaWF0IjoxNzE5ODQ2NDc4LCJleHAiOjE3MTk4NDczNzh9.2cd6UmazoNbt1wKx_eQcaqdTcr-82eOt1fR9PDo6KBA",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGFpbXMiOnsic3ViIjoxLCJmaW5nZXJwcmludCI6eyJpcCI6Ijo6ZmZmZjoxMjcuMC4wLjEiLCJ1c2VyQWdlbnQiOiJ2c2NvZGUtcmVzdGNsaWVudCJ9fSwiaWF0IjoxNzE5ODQ2NDc4LCJleHAiOjE3MTk4NTAwNzh9.9OiazzPKrNEc6quJ4hfo6QrhJSr3XwH6_8MfaTOfSjc"
 }
