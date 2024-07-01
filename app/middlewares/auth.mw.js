@@ -15,7 +15,7 @@ export default function authMiddleware(req, _, next) {
     return next();
   }
 
-  req.auth = checkAccessTokenValidity(accessToken);
+  req.auth = checkAccessTokenValidity(accessToken, false);
 
   next();
 

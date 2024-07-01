@@ -5,11 +5,11 @@ const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
 
 /**
  * Générer un Access Token valide et signé
- * @param {object} user - Objet user contenant les informations de l'utilisateur
+ * @param {object} claims - Objet contenant les informations de l'utilisateur
  * @returns - JWT valide et signé
  */
-export const createAccessToken = ({ id }) => jwt.sign({
-  sub: id,
+export const createAccessToken = (claims) => jwt.sign({
+  claims,
 }, ACCESS_TOKEN_SECRET, {
   algorithm: 'HS256',
   expiresIn: '15m',
@@ -17,11 +17,11 @@ export const createAccessToken = ({ id }) => jwt.sign({
 
 /**
  * Générer un Refresh Token valide et signé
- * @param {object} user - Objet user contenant les informations de l'utilisateur
+ * @param {object} claims - Objet contenant les informations de l'utilisateur
  * @returns - JWT valide et signé
  */
-export const createRefreshToken = ({ id }) => jwt.sign({
-  sub: id,
+export const createRefreshToken = (claims) => jwt.sign({
+  claims,
 }, REFRESH_TOKEN_SECRET, {
   algorithm: 'HS256',
   expiresIn: '60m',
@@ -29,30 +29,33 @@ export const createRefreshToken = ({ id }) => jwt.sign({
 
 /**
  * Vérifie si le token passé en argument est expiré ou non
- * @param {object} token - Objet qui est égal au token
+ * @param {object} decodedToken - Objet qui est égal au token décodé
  * @returns
  */
-function checkExpirationToken(token) {
+export function checkExpirationToken(decodedToken) {
 
-  const tokenExp = token.exp;
+  const tokenExp = decodedToken.exp;
   const nowInSec = (Math.floor(Date.now()) / 1000);
 
   // Si le token est expiré
   if (nowInSec > tokenExp) return null;
 
   // Si le token n'est pas expiré
-  return token;
+  return decodedToken;
 }
 
 /**
  * Vérification de la validation et de l'expiration du refresh token de l'utilisateur
- * @param {*} refreshToken - refresh token
+ * @param {string} refreshToken - refresh token
+ * @param {boolean} ignoreExpiration - La vérification doit-elle prendre ne compte l'expiration du token ?
  * @returns
  */
-function checkRefreshTokenValidity(refreshToken) {
+export function checkRefreshTokenValidity(refreshToken, ignoreExpiration) {
 
   // Vérifier si le token de refresh est valide ET non expiré
-  const decodedRefreshToken = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
+  const decodedRefreshToken = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, {
+    ignoreExpiration,
+  });
 
   // Si le token de refresh est non valide et/ou expiré, l'utilisateur sera considéré comme non authentifié
   /*
@@ -62,19 +65,29 @@ function checkRefreshTokenValidity(refreshToken) {
   if (!decodedRefreshToken) return null;
 
   // Si le token de refresh est valide ET non expiré
-  return refreshToken;
+  return decodedRefreshToken;
 
 }
 
 /**
  * Vérification de la validation et de l'expiration du token d'accès de l'utilisateur
- * @param {object} accessToken - Token d'accès de l'utilisateur
+ * @param {string} accessToken - Token d'accès de l'utilisateur
+ * @param {boolean} ignoreExpiration - La vérification doit-elle prendre ne compte l'expiration du token ?
  * @returns
  */
-export function checkAccessTokenValidity(accessToken) {
+export function checkAccessTokenValidity(accessToken, ignoreExpiration) {
+
+  // Vérifier que la chaîne contient bien 'Bearer '
+  const bearerIsPresent = accessToken.startsWith('Bearer ');
+  if (!bearerIsPresent) return null;
+
+  // Séparer le 'Bearer' du token 7
+  const newAccessToken = accessToken.slice(7);
 
   // Vérifier seulement si le token d'accès est valide ou non
-  const decodedAccessToken = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
+  const decodedAccessToken = jwt.verify(newAccessToken, ACCESS_TOKEN_SECRET, {
+    ignoreExpiration,
+  });
 
   // Retourne null si le token d'accès est valide mais expiré
   if (!decodedAccessToken) return null;
@@ -83,3 +96,12 @@ export function checkAccessTokenValidity(accessToken) {
   return decodedAccessToken;
 
 }
+
+/**
+ * Vérifier si deux objets sont les mêmes
+ * @param {object} claim1 - Premier objet à comparer
+ * @param {object} claim2 - Deuxième objet à comparer
+ * @returns
+ */
+export const claimsTokenVerify = (claim1, claim2) =>
+  (JSON.stringify(claim1) === JSON.stringify(claim2));
