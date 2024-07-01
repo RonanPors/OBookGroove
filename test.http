@@ -1,0 +1,12 @@
+@endpoint=http://localhost:{{$dotenv PORT}}
+
+### Enrichissement du vocabulaire
+POST {{endpoint}}/auth/signup
+Content-Type: application/json
+
+{
+  "pseudo": "Mix",
+  "email": "mix@oclock.io",
+  "password": "password",
+  "confirmPassword": "password"
+}
