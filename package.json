@@ -5,8 +5,8 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "start": "node .",
-    "dev": "node --watch server.js",
+    "start": "NODE_ENV=production node .",
+    "dev": "NODE_ENV=development node --watch server.js",
     "resetDB": "sqitch revert -y; sqitch deploy; node ./data/seeding.js"
   },
   "keywords": [],

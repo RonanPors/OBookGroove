@@ -7,5 +7,7 @@ const httpServer = createServer(app);
 const PORT = process.env.PORT || 4000;
 
 httpServer.listen(PORT, () => {
-  console.log(`Server launched at http://localhost:${PORT}`);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`🚀HTTP Server launched at http://localhost:${PORT} 🚀`);
+  }
 });

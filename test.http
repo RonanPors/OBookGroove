@@ -1,6 +1,7 @@
 @endpoint=http://localhost:{{$dotenv PORT}}
 
-### Enrichissement du vocabulaire
+### Création d'un utilisateur O'Book Groove
+
 POST {{endpoint}}/auth/signup
 Content-Type: application/json
 
