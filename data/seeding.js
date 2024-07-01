@@ -17,23 +17,27 @@ async function insertUsers() {
     (
         "pseudo",
         "email",
-        "password"
+        "password",
+        "refresh_token"
     )
     VALUES
     (
         'Max',
         'max@oclock.io',
-        '$2b$10$h4Dh2fRGAf4YdC.Cqg1yleq41QHmG61B76THHCp03SgMEizvZlscy'
+        '$2b$10$h4Dh2fRGAf4YdC.Cqg1yleq41QHmG61B76THHCp03SgMEizvZlscy',
+        'refresh_token'
     ),-- superpass
     (
         'Arnaud',
         'arnaud@oclock.io',
-        '$2b$10$h4Dh2fRGAf4YdC.Cqg1yleq41QHmG61B76THHCp03SgMEizvZlscy'
+        '$2b$10$h4Dh2fRGAf4YdC.Cqg1yleq41QHmG61B76THHCp03SgMEizvZlscy',
+        'refresh_token'
     ), -- superpass
     (
         'Ronane',
         'ronane@oclock.io',
-        '$2b$10$h4Dh2fRGAf4YdC.Cqg1yleq41QHmG61B76THHCp03SgMEizvZlscy'
+        '$2b$10$h4Dh2fRGAf4YdC.Cqg1yleq41QHmG61B76THHCp03SgMEizvZlscy',
+        'refresh_token'
     ) -- superpass
     RETURNING id
   `;
