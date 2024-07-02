@@ -65,8 +65,16 @@ export default {
 
       // Renvoyer aussi les tokens dans les cookies
       // httpOnly par défaut
-      res.cookie('accessTokenObg', `Bearer ${response.accessToken}`);
-      res.cookie('refreshTokenObg', response.refreshToken);
+      res.cookie('accessTokenObg', `Bearer ${response.accessToken}`, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'Strict',
+      });
+      res.cookie('refreshTokenObg', response.refreshToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'Strict',
+      });
 
       // Retourner les deux tokens ici
       return res.json(response);
@@ -122,8 +130,16 @@ export default {
 
       // Renvoyer aussi les tokens dans les cookies
       // httpOnly par défaut
-      res.cookie('accessTokenObg', `Bearer ${response.accessToken}`);
-      res.cookie('refreshTokenObg', response.refreshToken);
+      res.cookie('accessTokenObg', `Bearer ${response.accessToken}`, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'Strict',
+      });
+      res.cookie('refreshTokenObg', response.refreshToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'Strict',
+      });
 
       // Retourner les deux tokens ici
       return res.json(response);
@@ -141,9 +157,6 @@ export default {
 
       // Récupérer les tokens depuis les cookies de la requête
       const { accessTokenObg, refreshTokenObg } = req.cookies;
-
-      console.log(accessTokenObg);
-      console.log(refreshTokenObg);
 
       // Vérifier et décoder le refresh token
       const decodedRefreshToken = checkRefreshTokenValidity(refreshTokenObg, false);
@@ -205,8 +218,16 @@ export default {
 
       // Renvoyer aussi les tokens dans les cookies
       // httpOnly par défaut
-      res.cookie('accessTokenObg', `Bearer ${response.accessToken}`);
-      res.cookie('refreshTokenObg', response.refreshToken);
+      res.cookie('accessTokenObg', `Bearer ${response.accessToken}`, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'Strict',
+      });
+      res.cookie('refreshTokenObg', response.refreshToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'Strict',
+      });
 
       // Renvoyer en réponse les deux tokens à jour
       return res.json(response);
