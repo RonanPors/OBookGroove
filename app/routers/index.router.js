@@ -13,6 +13,8 @@ router.post('/auth/signup', validationMiddleware(userCreateSchema, 'body'), auth
 
 router.post('/auth/signin', validationMiddleware(userAuthSchema, 'body'), authController.signin);
 
-router.post('/auth/generate', authController.generate);
+router.get('/auth/generate', authController.generate);
+
+router.get('/auth/tokens', authController.getTokens);
 
 export default router;

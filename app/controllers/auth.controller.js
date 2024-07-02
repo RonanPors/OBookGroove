@@ -59,6 +59,15 @@ export default {
       // Vérifier si l'utilisateur a bien été créé
       if (!user) throw new Error('Error signup.');
 
+      // Nettoyer les cookies avant d'y stocker les tokens
+      res.clearCookie('accessTokenObg');
+      res.clearCookie('refreshTokenObg');
+
+      // Renvoyer aussi les tokens dans les cookies
+      // httpOnly par défaut
+      res.cookie('accessTokenObg', `Bearer ${response.accessToken}`);
+      res.cookie('refreshTokenObg', response.refreshToken);
+
       // Retourner les deux tokens ici
       return res.json(response);
 
@@ -107,6 +116,15 @@ export default {
         refresh_token: response.refreshToken,
       });
 
+      // Nettoyer les cookies avant d'y stocker les tokens
+      res.clearCookie('accessTokenObg');
+      res.clearCookie('refreshTokenObg');
+
+      // Renvoyer aussi les tokens dans les cookies
+      // httpOnly par défaut
+      res.cookie('accessTokenObg', `Bearer ${response.accessToken}`);
+      res.cookie('refreshTokenObg', response.refreshToken);
+
       // Retourner les deux tokens ici
       return res.json(response);
 
@@ -121,22 +139,26 @@ export default {
 
     try {
 
-      const { accessToken, refreshToken } = req.body;
+      // Récupérer les tokens depuis les cookies de la requête
+      const { accessTokenObg, refreshTokenObg } = req.cookies;
+
+      console.log(accessTokenObg);
+      console.log(refreshTokenObg);
 
       // Vérifier et décoder le refresh token
-      const decodedRefreshToken = checkRefreshTokenValidity(refreshToken, false);
+      const decodedRefreshToken = checkRefreshTokenValidity(refreshTokenObg, false);
 
       // Si le refresh token est non valide ou expiré
       if (!decodedRefreshToken)
-        throw new Error('Error generate tokens.');
+        throw new Error('Error generate tokens.1');
 
       // Vérifier et décoder le token d'accès
-      const decodedAccessToken = checkAccessTokenValidity(accessToken, true);
+      const decodedAccessToken = checkAccessTokenValidity(accessTokenObg, true);
 
       // Si le token d'accès est non valide
       //! non valide = impossible à signer avec le secret
       if (!decodedAccessToken)
-        throw new Error('Error generate tokens.');
+        throw new Error('Error generate tokens.2');
 
       // Vérifier si l'objet claims des deux tokens sont les mêmes
       const claimsIsValid = claimsTokenVerify(
@@ -144,7 +166,7 @@ export default {
         decodedRefreshToken.claims,
       );
       if (!claimsIsValid)
-        throw new Error('Error generate tokens.');
+        throw new Error('Error generate tokens.3');
 
       // Récupérer l'utilisateur en BDD depuis l'id du token qui est dans sub
       const user = await userDatamapper.findByPk(decodedAccessToken.claims.sub);
@@ -152,8 +174,8 @@ export default {
       // Vérifier que le refresh token est le même que celui de l'utilisateur en bdd
       // Car les refresh tokens valident mais qui ne sont pas en BDD ne seront pas pris en compte
       //! One-time Use Tokens
-      if (user.refresh_token !== refreshToken)
-        throw new Error('Error generate tokens.');
+      if (user.refresh_token !== refreshTokenObg)
+        throw new Error('Error generate tokens.4');
 
       // Création de l'objet claims pour les deux tokens
       const claims = {
@@ -177,6 +199,15 @@ export default {
         refresh_token: response.refreshToken,
       });
 
+      // Nettoyer les cookies avant d'y stocker les tokens
+      res.clearCookie('accessTokenObg');
+      res.clearCookie('refreshTokenObg');
+
+      // Renvoyer aussi les tokens dans les cookies
+      // httpOnly par défaut
+      res.cookie('accessTokenObg', `Bearer ${response.accessToken}`);
+      res.cookie('refreshTokenObg', response.refreshToken);
+
       // Renvoyer en réponse les deux tokens à jour
       return res.json(response);
 
@@ -184,6 +215,20 @@ export default {
       console.error(err);
       return res.status(401).json({ error: err.message });
     }
+
+  },
+
+  getTokens(req, res) {
+
+    // Récupérer les tokens depuis les cookies de la requête
+    const { accessTokenObg, refreshTokenObg } = req.cookies;
+
+    // Renvoyer les tokens en JSON
+    res.json({
+      accessTokenObg,
+      tokenType: 'Bearer',
+      refreshTokenObg,
+    });
 
   },
 
