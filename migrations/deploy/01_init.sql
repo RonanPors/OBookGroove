@@ -15,7 +15,7 @@ CREATE TABLE "user" (
     "updated_at" TIMESTAMPTZ
 );
 
-CREATE TABLE book (
+CREATE TABLE "book" (
     "id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "isbn" TEXT NOT NULL,
     "title" TEXT NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE book (
     "updated_at" TIMESTAMPTZ
 );
 
-CREATE TABLE user_has_book (
+CREATE TABLE "user_has_book" (
     "id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "book_id" INT NOT NULL,
     "user_id" INT NOT NULL,
