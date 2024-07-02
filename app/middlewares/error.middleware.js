@@ -2,10 +2,11 @@ export default (err, req, res, next) => {
 
   let { status, message } = err;
 
-  // if(err.name === 'ValidationError'){
-  //   status = 400;
-  //   message = err.details.map((detail) => detail.message);
-  // }
+  if(err.name === 'ValidationError'){
+    console.log('je passe ici');
+    status = 400;
+    message = err.details.map((detail) => detail.message);
+  }
 
   if(err.name === 'ErrorApi'){
     return res.status(400).json({error: err.message});
