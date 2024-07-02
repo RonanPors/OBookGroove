@@ -28,3 +28,7 @@ Content-Type: application/json
 ### Récupération des tokens de l'utilisateur O'Book Groove
 GET {{endpoint}}/auth/tokens
 Content-Type: application/json
+
+### Test gestion d'erreur sur URL
+GET {{endpoint}}/auth/truc
+Content-Type: application/json

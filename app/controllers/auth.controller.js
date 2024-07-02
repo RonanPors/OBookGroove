@@ -142,9 +142,6 @@ export default {
       // Récupérer les tokens depuis les cookies de la requête
       const { accessTokenObg, refreshTokenObg } = req.cookies;
 
-      console.log(accessTokenObg);
-      console.log(refreshTokenObg);
-
       // Vérifier et décoder le refresh token
       const decodedRefreshToken = checkRefreshTokenValidity(refreshTokenObg, false);
 
