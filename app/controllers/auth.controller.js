@@ -65,8 +65,16 @@ export default {
 
       // Renvoyer aussi les tokens dans les cookies
       // httpOnly par défaut
-      res.cookie('accessTokenObg', `Bearer ${response.accessToken}`);
-      res.cookie('refreshTokenObg', response.refreshToken);
+      res.cookie('accessTokenObg', `Bearer ${response.accessToken}`, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'Strict',
+      });
+      res.cookie('refreshTokenObg', response.refreshToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'Strict',
+      });
 
       // Retourner les deux tokens ici
       return res.json(response);
@@ -122,8 +130,16 @@ export default {
 
       // Renvoyer aussi les tokens dans les cookies
       // httpOnly par défaut
-      res.cookie('accessTokenObg', `Bearer ${response.accessToken}`);
-      res.cookie('refreshTokenObg', response.refreshToken);
+      res.cookie('accessTokenObg', `Bearer ${response.accessToken}`, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'Strict',
+      });
+      res.cookie('refreshTokenObg', response.refreshToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'Strict',
+      });
 
       // Retourner les deux tokens ici
       return res.json(response);
@@ -147,7 +163,7 @@ export default {
 
       // Si le refresh token est non valide ou expiré
       if (!decodedRefreshToken)
-        throw new Error('Error generate tokens.1');
+        throw new Error('Error generate tokens.');
 
       // Vérifier et décoder le token d'accès
       const decodedAccessToken = checkAccessTokenValidity(accessTokenObg, true);
@@ -155,7 +171,7 @@ export default {
       // Si le token d'accès est non valide
       //! non valide = impossible à signer avec le secret
       if (!decodedAccessToken)
-        throw new Error('Error generate tokens.2');
+        throw new Error('Error generate tokens.');
 
       // Vérifier si l'objet claims des deux tokens sont les mêmes
       const claimsIsValid = claimsTokenVerify(
@@ -163,7 +179,17 @@ export default {
         decodedRefreshToken.claims,
       );
       if (!claimsIsValid)
-        throw new Error('Error generate tokens.3');
+        throw new Error('Error generate tokens.');
+
+      // Vérifier l'ip de la requête avec celle stockée dans le token
+      const { claims: { fingerprint: { ip } } } = decodedAccessToken;
+      if (req.ip !== ip)
+        throw new Error('Error generate tokens.');
+
+      // Vérifier l'user-agent de la requête avec celui stocké dans le token
+      const { claims: { fingerprint: { userAgent } } } = decodedAccessToken;
+      if (req.headers['user-agent'] !== userAgent)
+        throw new Error('Error generate tokens.');
 
       // Récupérer l'utilisateur en BDD depuis l'id du token qui est dans sub
       const user = await userDatamapper.findByPk(decodedAccessToken.claims.sub);
@@ -172,7 +198,7 @@ export default {
       // Car les refresh tokens valident mais qui ne sont pas en BDD ne seront pas pris en compte
       //! One-time Use Tokens
       if (user.refresh_token !== refreshTokenObg)
-        throw new Error('Error generate tokens.4');
+        throw new Error('Error generate tokens.');
 
       // Création de l'objet claims pour les deux tokens
       const claims = {
@@ -202,8 +228,16 @@ export default {
 
       // Renvoyer aussi les tokens dans les cookies
       // httpOnly par défaut
-      res.cookie('accessTokenObg', `Bearer ${response.accessToken}`);
-      res.cookie('refreshTokenObg', response.refreshToken);
+      res.cookie('accessTokenObg', `Bearer ${response.accessToken}`, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'Strict',
+      });
+      res.cookie('refreshTokenObg', response.refreshToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'Strict',
+      });
 
       // Renvoyer en réponse les deux tokens à jour
       return res.json(response);
