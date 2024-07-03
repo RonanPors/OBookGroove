@@ -3,7 +3,13 @@ import pinoHttp from 'pino-http';
 import cookieParser from 'cookie-parser';
 import router from './routers/index.router.js';
 import docMiddleware from './middlewares/doc.mw.js';
+import cors from 'cors';
+
 const app = express();
+
+app.use(cors({
+  origin: '*',
+}));
 
 app.use(cookieParser());
 
