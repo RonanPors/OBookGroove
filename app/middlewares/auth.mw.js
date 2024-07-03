@@ -8,14 +8,14 @@ import { checkAccessTokenValidity } from "../auth/jwt.utils";
  */
 export default function authMiddleware(req, _, next) {
 
-  const accessToken = req.headers['authorization'];
+  const { accessTokenObg } = req.cookies;
 
-  if (!accessToken) {
+  if (!accessTokenObg) {
     req.auth = null;
     return next();
   }
 
-  req.auth = checkAccessTokenValidity(accessToken, false);
+  req.auth = checkAccessTokenValidity(accessTokenObg, false);
 
   next();
 
