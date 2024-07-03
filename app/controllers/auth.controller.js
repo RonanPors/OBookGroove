@@ -197,6 +197,8 @@ export default {
       // Vérifier que le refresh token est le même que celui de l'utilisateur en bdd
       // Car les refresh tokens valident mais qui ne sont pas en BDD ne seront pas pris en compte
       //! One-time Use Tokens
+      console.log('refresh_token:', user.refresh_token);
+      console.log('refreshTokenObg:', refreshTokenObg);
       if (user.refresh_token !== refreshTokenObg)
         throw new Error('Error generate tokens.');
 

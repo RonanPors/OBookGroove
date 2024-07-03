@@ -18,12 +18,57 @@ const router = Router();
 /* Pour chaque route, le validationMiddleware vérifie les informations transmises dans la requête
 puis le controllerHandler (ch) à pour rôle d'encapsuler l'appel d'une methode controller
 afin de pouvoir gérer les erreurs de manières optimisé */
+
+/**
+ * POST /auth/signup
+ * @summary Créer un compte utilisateur en base de données.
+ * @tags Serveur d'authentification
+ * @param {object} request.body.required - Pseudo, email, mot de passe de l'utilisateur
+ * @example request - example payload
+ * {
+ *   "pseudo": "Mex",
+ *   "email": "mex@oclock.io",
+ *   "password": "Antestdefou3*",
+ *   "confirmPassword": "Antestdefou3*"
+ * }
+ * @return {object} 200 - success response - application/json
+ * @return {object} 400 - Bad request response
+ */
 router.post('/auth/signup', validationMiddleware(userCreateSchema, 'body'), controllerHandler(authController.signup));
 
+/**
+ * POST /auth/signin
+ * @summary Se connecter à un compte utilisateur déjà présent en base de données.
+ * @tags Serveur d'authentification
+ * @param {object} request.body.required - Email et mot de passe de l'utilisateur
+ * @example request - example payload
+ * {
+ *   "email": "max@oclock.io",
+ *   "password": "Antestdefou3*"
+ * }
+ * @return {object} 200 - success response - application/json
+ * @return {object} 400 - Bad request response
+ */
 router.post('/auth/signin', validationMiddleware(userAuthSchema, 'body'), controllerHandler(authController.signin));
 
+/**
+ * GET /auth/generate
+ * @summary Générer de nouveaux tokens depuis les anciens.
+ * @description Pensez à vous connecter à un compte avec la route /auth/signin pour avoir des tokens dans vos cookies
+ * @tags Serveur d'authentification
+ * @return {object} 200 - success response - application/json
+ * @return {object} 400 - Bad request response
+ */
 router.get('/auth/generate', controllerHandler(authController.generate));
 
+/**
+ * GET /auth/tokens
+ * @summary Récupérer les tokens depuis les cookies.
+ * @description Pensez à vous connecter à un compte avec la route /auth/signin pour avoir des tokens dans vos cookies
+ * @tags Serveur d'authentification
+ * @return {object} 200 - success response - application/json
+ * @return {object} 400 - Bad request response
+ */
 router.get('/auth/tokens', controllerHandler(authController.getTokens));
 
 router.use((_, res, next) => {
