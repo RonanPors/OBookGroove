@@ -1,0 +1,34 @@
+@endpoint=http://localhost:{{$dotenv PORT}}
+
+### Création d'un utilisateur O'Book Groove
+
+POST {{endpoint}}/auth/signup
+Content-Type: application/json
+
+{
+  "pseudo": "Mix",
+  "email": "mix@oclock.io",
+  "password": "Antestdefou3*",
+  "confirmPassword": "Antestdefou3*"
+}
+
+### Connexion d'un utilisateur O'Book Groove
+POST {{endpoint}}/auth/signin
+Content-Type: application/json
+
+{
+  "email": "max@oclock.io",
+  "password": "Antestdefou3*"
+}
+
+### Génération de tokens pour un utilisateur O'Book Groove
+GET {{endpoint}}/auth/generate
+Content-Type: application/json
+
+### Récupération des tokens de l'utilisateur O'Book Groove
+GET {{endpoint}}/auth/tokens
+Content-Type: application/json
+
+### Test gestion d'erreur sur URL
+GET {{endpoint}}/auth/truc
+Content-Type: application/json
