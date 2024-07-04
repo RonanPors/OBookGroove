@@ -9,6 +9,7 @@ CREATE TABLE "user" (
     "password" TEXT NOT NULL,
     "last_login" TIMESTAMPTZ NOT NULL DEFAULT now(),
     "refresh_token" TEXT,
+    "reset_token" TEXT,
     "phone_number" TEXT,
     "profile_picture" TEXT,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),

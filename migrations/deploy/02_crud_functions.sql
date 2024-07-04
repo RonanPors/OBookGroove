@@ -12,6 +12,7 @@ CREATE FUNCTION "insert_user"(json) RETURNS "user" AS $$
     "email",
     "password",
     "refresh_token",
+    "reset_token",
     "phone_number",
     "profile_picture"
   ) VALUES (
@@ -19,6 +20,7 @@ CREATE FUNCTION "insert_user"(json) RETURNS "user" AS $$
     $1->>'email',
     $1->>'password',
     $1->>'refresh_token',
+    $1->>'reset_token',
     $1->>'phone_number',
     $1->>'profile_picture'
   ) RETURNING *
@@ -82,6 +84,7 @@ CREATE FUNCTION "update_user"(json) RETURNS "user" AS $$
     "password" = COALESCE($1->>'password', "password"),
     "last_login" = COALESCE(now(), "last_login"),
     "refresh_token" = COALESCE($1->>'refresh_token', "refresh_token"),
+    "reset_token" = COALESCE($1->>'reset_token', "reset_token"),
     "phone_number" = COALESCE($1->>'phone_number', "phone_number"),
     "profile_picture" = COALESCE($1->>'profile_picture', "profile_picture"),
     "updated_at" = now()
