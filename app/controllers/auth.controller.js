@@ -1,6 +1,8 @@
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 import { userDatamapper } from '../datamappers/index.datamapper.js';
 import { checkAccessTokenValidity, checkRefreshTokenValidity, claimsTokenVerify, createAccessToken, createRefreshToken } from '../auth/jwt.utils.js';
+import { sendEmail } from '../utils/sendEmail.js';
 
 export default {
 
@@ -45,6 +47,7 @@ export default {
 
       // Génération des deux tokens (access & refresh)
       const response = {
+        pseudo,
         accessToken: createAccessToken(claims),
         tokenType: 'Bearer',
         refreshToken: createRefreshToken(claims),
@@ -111,6 +114,7 @@ export default {
 
       // Génération des deux tokens (access & refresh)
       const response = {
+        pseudo: user.pseudo,
         accessToken: createAccessToken(claims),
         tokenType: 'Bearer',
         refreshToken: createRefreshToken(claims),
@@ -262,6 +266,108 @@ export default {
       tokenType: 'Bearer',
       refreshTokenObg,
     });
+
+  },
+
+  async resetPassword(req, res) {
+
+    try {
+
+      const { email } = req.body;
+
+      const user = await userDatamapper.findByEmail(email);
+
+      if (!user)
+        throw new Error('L\'utilisateur est introuvable.');
+
+      // Si l'utilisateur est trouvé, chercher s'il ne possède pas déjà un token pour reset son mot de passe
+      // Afin d'éviter de générer plusieurs liens de reset password pour le même utilisateur
+      if (user.reset_token)
+        throw new Error('L\'utilisateur possède déjà un lien.');
+
+      const { reset_token } = await userDatamapper.update({
+        id: user.id,
+        reset_token: crypto.randomBytes(32).toString("hex"),
+      });
+
+      console.log('reset_token:', reset_token);
+
+      if (!reset_token)
+        throw new Error('Erreur dans la génération du token.');
+
+      const subject = "Réinitialisation du mot de passe - O'BookGroove";
+      const html = `http://localhost:4000/reset-password/${user.id}/${reset_token}`;
+      sendEmail(email, subject, html);
+
+      return res.json({ ok: true });
+
+    } catch (err) {
+      console.error(err);
+      return res.status(401).json({ error: err.message });
+    }
+
+  },
+
+  async resetPasswordConfirm(req, res) {
+
+    try {
+
+      console.log('1');
+
+      const { userId, resetToken } = req.params;
+      const { password, confirmPassword } = req.body;
+
+      console.log('2');
+
+      // Vérifier si les deux mots de passe sont les mêmes
+      if (password !== confirmPassword)
+        throw new Error('Les deux mots de passe ne sont pas les mêmes.');
+
+      // Vérifier que le token est bien lié à l'userId
+      const user = await userDatamapper.findByPk(userId);
+
+      // Si l'utilisateur n'existe pas
+      if (!user)
+        throw new Error('L\'utilisateur est introuvable.');
+
+      if (user.reset_token !== resetToken)
+        throw new Error('Les deux tokens ne sont pas les mêmes');
+
+      // Génération du salt
+      const salt = await bcrypt.genSalt(12);
+      // Création d'un nouvel utilisateur
+      await userDatamapper.update({
+        id: userId,
+        password: await bcrypt.hash(password, salt),
+        reset_token: null,
+      });
+
+      return res.json({ ok: true });
+
+    } catch (err) {
+      console.error(err);
+      return res.status(401).json({ error: err.message });
+    }
+
+  },
+
+  async getResetToken(req, res) {
+
+    try {
+
+      const { userId } = req.params;
+
+      const user = await userDatamapper.findByPk(userId);
+
+      if (!user)
+        throw new Error('L\'utilisateur est introuvable.');
+
+      return res.json({ userId, resetToken: user.reset_token });
+
+    } catch (err) {
+      console.error(err);
+      return res.status(401).json({ error: err.message });
+    }
 
   },
 
