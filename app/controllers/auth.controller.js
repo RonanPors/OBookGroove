@@ -35,55 +35,32 @@ export default {
     // Création d'un nouvel utilisateur
     const user = await userDatamapper.create({
       ...req.body,
+      is_active: false,
       password: await bcrypt.hash(password, salt),
     });
 
-    // Création de l'objet claims pour les deux tokens
-    const claims = {
-      sub: user.id,
-      fingerprint: {
-        ip: req.ip,
-        userAgent: req.headers['user-agent'],
-      },
-    };
+    // Génération du token pour créer l'url de confirmation d'inscription
+    const confirm_token = crypto.randomBytes(32).toString("hex");
+    if (!confirm_token)
+      throw new ErrorApi('FAILED_SIGNUP', 'Erreur dans la génération du token de confirmation.', {status: 500});
 
-    // Génération des deux tokens (access & refresh)
-    const response = {
-      pseudo,
-      accessToken: createAccessToken(claims),
-      tokenType: 'Bearer',
-      refreshToken: createRefreshToken(claims),
-    };
-
-    // Mise à jour du refresh token de l'utilisateur
+    // Mise à jour du refresh token et du confirm_token de l'utilisateur
     await userDatamapper.update({
       id: user.id,
-      refresh_token: response.refreshToken,
+      confirm_token,
     });
 
     // Vérifier si l'utilisateur a bien été créé
     if (!user)
       throw new ErrorApi('FAILED_SIGNUP', 'L\'utilisateur n\'a pas pu être créé.', {status: 400});
 
-    // Nettoyer les cookies avant d'y stocker les tokens
-    res.clearCookie('accessTokenObg');
-    res.clearCookie('refreshTokenObg');
-
-    // Renvoyer aussi les tokens dans les cookies
-    // httpOnly par défaut
-    res.cookie('accessTokenObg', `Bearer ${response.accessToken}`, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'Strict',
-    });
-    res.cookie('refreshTokenObg', response.refreshToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'Strict',
-    });
+    // Envoi du mail de confirmation d'inscription
+    const subject = "Réinitialisation du mot de passe - O'BookGroove";
+    const html = `http://localhost:4000/confirm-signup/${user.id}/${confirm_token}`;
+    sendEmail(email, subject, html);
 
     // Retourner les deux tokens ici
-    return res.json(response);
+    return res.json({ ok: true });
 
   },
 
@@ -93,12 +70,16 @@ export default {
 
     // Vérifier si l'email existe
     const user = await userDatamapper.findByEmail(email);
-    if(!user)
+    if (!user)
+      throw new ErrorApi('FAILED_SIGNIN', 'Erreur lors de la connexion.', {status: 400});
+
+    // Vérifier si c'est un compte qui n'a pas encore été activé
+    if (!user.is_active)
       throw new ErrorApi('FAILED_SIGNIN', 'Erreur lors de la connexion.', {status: 400});
 
     // Vérifier si le mot de passe est correct
     const isValidPassword = await bcrypt.compare(password, user.password);
-    if(!isValidPassword)
+    if (!isValidPassword)
       throw new ErrorApi('FAILED_SIGNIN', 'Erreur lors de la connexion.', {status: 400});
 
     // Création de l'objet claims pour les deux tokens
@@ -310,6 +291,7 @@ export default {
 
   },
 
+  // Sert à vérifier si l'url est bonne et que le front peut afficher quelque chose ou un NOT FOUND 404
   async verifyResetToken(req, res) {
 
     const { userId, resetToken } = req.params;
@@ -323,6 +305,80 @@ export default {
       throw new ErrorApi('FAILED_VERIFY_RESET_TOKEN', 'Les tokens de réinitialisation ne sont pas identiques.', {status: 498});
 
     return res.json({ ok: true });
+
+  },
+
+  // Sert à vérifier si l'url est bonne et que le front peut afficher quelque chose ou un NOT FOUND 404
+  async verifyConfirmToken(req, res) {
+
+    const { userId, confirmToken } = req.params;
+
+    const user = await userDatamapper.findByPk(userId);
+
+    if (!user)
+      throw new ErrorApi('FAILED_VERIFY_CONFIRM_TOKEN', 'L\'utilisateur est inexistant.', {status: 400});
+
+    if (user.confirm_token !== confirmToken)
+      throw new ErrorApi('FAILED_VERIFY_CONFIRM_TOKEN', 'Les tokens de confirmation ne sont pas identiques.', {status: 498});
+
+    return res.json({ ok: true });
+
+  },
+
+  async confirmSignup(req, res) {
+
+    const { userId, confirmToken } = req.params;
+
+    const user = await userDatamapper.findByPk(userId);
+
+    if (!user)
+      throw new ErrorApi('FAILED_CONFIRM_SIGNUP', 'L\'utilisateur est inexistant.', {status: 400});
+
+    if (user.confirm_token !== confirmToken)
+      throw new ErrorApi('FAILED_CONFIRM_SIGNUP', 'Les tokens de confirmation ne sont pas identiques.', {status: 498});
+
+    // Création de l'objet claims pour les deux tokens
+    const claims = {
+      sub: user.id,
+      fingerprint: {
+        ip: req.ip,
+        userAgent: req.headers['user-agent'],
+      },
+    };
+
+    // Génération des deux tokens (access & refresh)
+    const response = {
+      pseudo: user.pseudo,
+      accessToken: createAccessToken(claims),
+      tokenType: 'Bearer',
+      refreshToken: createRefreshToken(claims),
+    };
+
+    await userDatamapper.update({
+      id: userId,
+      is_active: true,
+      refresh_token: response.refreshToken,
+      confirm_token: null,
+    });
+
+    // Nettoyer les cookies avant d'y stocker les tokens
+    res.clearCookie('accessTokenObg');
+    res.clearCookie('refreshTokenObg');
+
+    // Renvoyer aussi les tokens dans les cookies
+    // httpOnly par défaut
+    res.cookie('accessTokenObg', `Bearer ${response.accessToken}`, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'Strict',
+    });
+    res.cookie('refreshTokenObg', response.refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'Strict',
+    });
+
+    return res.json(response);
 
   },
 

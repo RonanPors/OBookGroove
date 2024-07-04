@@ -11,16 +11,20 @@ CREATE FUNCTION "insert_user"(json) RETURNS "user" AS $$
     "pseudo",
     "email",
     "password",
+    "is_active",
     "refresh_token",
     "reset_token",
+    "confirm_token",
     "phone_number",
     "profile_picture"
   ) VALUES (
     $1->>'pseudo',
     $1->>'email',
     $1->>'password',
+    ($1->>'is_active')::BOOLEAN,
     $1->>'refresh_token',
     $1->>'reset_token',
+    $1->>'confirm_token',
     $1->>'phone_number',
     $1->>'profile_picture'
   ) RETURNING *
@@ -82,9 +86,11 @@ CREATE FUNCTION "update_user"(json) RETURNS "user" AS $$
     "pseudo" = COALESCE($1->>'pseudo', "pseudo"),
     "email" = COALESCE($1->>'email', "email"),
     "password" = COALESCE($1->>'password', "password"),
+    "is_active" = COALESCE(($1->>'is_active')::BOOLEAN, "is_active"),
     "last_login" = COALESCE(now(), "last_login"),
     "refresh_token" = COALESCE($1->>'refresh_token', "refresh_token"),
-    "reset_token" = COALESCE($1->>'reset_token', "reset_token"),
+    "reset_token" = COALESCE($1->>'reset_token', NULL),
+    "confirm_token" = COALESCE($1->>'confirm_token', NULL),
     "phone_number" = COALESCE($1->>'phone_number', "phone_number"),
     "profile_picture" = COALESCE($1->>'profile_picture', "profile_picture"),
     "updated_at" = now()
