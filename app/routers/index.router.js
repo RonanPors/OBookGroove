@@ -4,6 +4,7 @@ import authController from '../controllers/auth.controller.js';
 // Importation des schemas de validation des données.
 import userCreateSchema from '../schemas/Joi/user.signup.schema.js';
 import userAuthSchema from '../schemas/Joi/user.signin.schema.js';
+import userResetPassSchema from '../schemas/Joi/user.reset.pass.schema.js';
 // Importation du middleware de validation des données.
 import validationMiddleware from '../middlewares/validation.middleware.js';
 //Importation du middleware de gestion des erreurs controllers.
@@ -63,7 +64,7 @@ router.post('/auth/signin', validationMiddleware(userAuthSchema, 'body'), contro
  * @return {object} 200 - success response - application/json
  * @return {object} 400 - Bad request response
  */
-router.post('/auth/reset-password', controllerHandler(authController.resetPassword));
+router.post('/auth/reset-password', validationMiddleware(userResetPassSchema.step1, 'body'), controllerHandler(authController.resetPassword));
 
 /**
  * POST /auth/{userId}/{resetToken}
@@ -80,7 +81,7 @@ router.post('/auth/reset-password', controllerHandler(authController.resetPasswo
  * @return {object} 200 - success response - application/json
  * @return {object} 400 - Bad request response
  */
-router.post('/auth/:userId([0-9]+)/:resetToken', controllerHandler(authController.resetPasswordConfirm));
+router.post('/auth/:userId([0-9]+)/:resetToken', validationMiddleware(userResetPassSchema.step2, 'body'), controllerHandler(authController.resetPasswordConfirm));
 
 /**
  * GET /auth/generate
@@ -103,17 +104,18 @@ router.get('/auth/generate', controllerHandler(authController.generate));
 router.get('/auth/tokens', controllerHandler(authController.getTokens));
 
 /**
- * GET /auth/get-reset-token/{userId}
- * @summary Récupérer l'id et le reset token de l'utilisateur
+ * GET /auth/verify-reset-token/{userId}/{resetToken}
+ * @summary Vérifier le token de réinitialisation en fonction de l'id utilisateur
  * @tags Serveur d'authentification
  * @param {number} userId.path.required - ID de l'utilisateur
+ * @param {string} resetToken.path.required - Token de réinitialisation utilisateur
  * @return {object} 200 - success response - application/json
  * @return {object} 400 - Bad request response
  */
-router.get('/auth/get-reset-token/:userId([0-9]+)', controllerHandler(authController.getResetToken));
+router.get('/auth/verify-reset-token/:userId([0-9]+)/:resetToken', controllerHandler(authController.verifyResetToken));
 
 router.use((_, __, next) => {
-  next(new ErrorApi('Resource not found', {status: 404}));
+  next(new ErrorApi('NOT_FOUND', 'Resource not found', {status: 404}));
 });
 
 router.use(errorHandler);
