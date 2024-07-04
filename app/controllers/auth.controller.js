@@ -327,7 +327,7 @@ export default {
 
   async confirmSignup(req, res) {
 
-    const { userId, confirmToken } = req.params;
+    const { userId, confirmToken } = req.body;
 
     const user = await userDatamapper.findByPk(userId);
 

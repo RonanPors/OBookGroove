@@ -5,6 +5,7 @@ import authController from '../controllers/auth.controller.js';
 import userCreateSchema from '../schemas/Joi/user.signup.schema.js';
 import userAuthSchema from '../schemas/Joi/user.signin.schema.js';
 import userResetPassSchema from '../schemas/Joi/user.reset.pass.schema.js';
+import userConfirmAccountSchema from '../schemas/Joi/user.confirm.account.schema.js';
 // Importation du middleware de validation des données.
 import validationMiddleware from '../middlewares/validation.middleware.js';
 //Importation du middleware de gestion des erreurs controllers.
@@ -84,6 +85,21 @@ router.post('/auth/reset-password', validationMiddleware(userResetPassSchema.ste
 router.post('/auth/reset-password/:userId([0-9]+)/:resetToken', validationMiddleware(userResetPassSchema.step2, 'body'), controllerHandler(authController.resetPasswordConfirm));
 
 /**
+ * POST /auth/confirm-signup
+ * @summary Confirmation du compte de l'utilisateur
+ * @tags Serveur d'authentification
+ * @param {object} request.body.required - ID et token de confirmation de l'utilisateur
+ * @example request - example payload
+ * {
+ *   "userId": "1",
+ *   "confirmToken": "Ajoutez un token de confirmation ici"
+ * }
+ * @return {object} 200 - success response - application/json
+ * @return {object} 400 - Bad request response
+ */
+router.post('/auth/confirm-signup', validationMiddleware(userConfirmAccountSchema, 'body'), controllerHandler(authController.confirmSignup));
+
+/**
  * GET /auth/generate
  * @summary Générer de nouveaux tokens depuis les anciens.
  * @description Pensez à vous connecter à un compte avec la route /auth/signin pour avoir des tokens dans vos cookies
@@ -124,17 +140,6 @@ router.get('/auth/verify-reset-token/:userId([0-9]+)/:resetToken', controllerHan
  * @return {object} 400 - Bad request response
  */
 router.get('/auth/verify-confirm-token/:userId([0-9]+)/:confirmToken', controllerHandler(authController.verifyConfirmToken));
-
-/**
- * GET /auth/confirm-signup/{userId}/{confirmToken}
- * @summary Confirmation du compte de l'utilisateur
- * @tags Serveur d'authentification
- * @param {number} userId.path.required - ID de l'utilisateur
- * @param {string} confirmToken.path.required - token de confirmation de l'utilisateur
- * @return {object} 200 - success response - application/json
- * @return {object} 400 - Bad request response
- */
-router.get('/auth/confirm-signup/:userId([0-9]+)/:confirmToken', controllerHandler(authController.confirmSignup));
 
 router.use((_, __, next) => {
   next(new ErrorApi('NOT_FOUND', 'Resource not found', {status: 404}));
