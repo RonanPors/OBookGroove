@@ -1,24 +1,43 @@
 export default (err, req, res, next) => {
 
-  let { status, message } = err;
+  let { status, name } = err;
 
-  if(err.name === 'ValidationError'){
-    console.log('je passe ici');
-    status = 400;
-    message = err.details.map((detail) => detail.message);
+  const templateError = {
+    name: err.name,
+    message: err.message,
+    status: err.status,
+    cause: err.causeObj,
+  };
+
+  //Gestion des erreurs de validation JOI
+  if(name === 'ValidationError'){
+    return res.status(400).json({error: {
+      ...templateError,
+      status: 400,
+      message: err.details.map((detail) => detail.message),
+    }});
   }
 
-  if(err.name === 'ErrorApi'){
-    return res.status(400).json({error: err.message});
+  //Gestion des erreurs personnalisées
+  if(status){
+    return res.status(err.status).json({error: {
+      ...templateError,
+    }});
   }
 
+  //Si aucune erreur trouvée
   if (!status) {
-    status = 500;
+    err.status = 500;
   }
 
   if (status === 500) {
-    res.status(500).json({error: 'Internal Server error, please contact the administrator'});
+    return res.status(500).json({error: {
+      ...templateError,
+      message: 'Internal Server error, please contact the administrator',
+    }});
   }
 
-  return res.status(status).json({ error: message });
+  return res.status(status).json({error: {
+    ...templateError,
+  }});
 };

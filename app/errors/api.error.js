@@ -1,8 +1,8 @@
 export default class ErrorApi extends Error {
 
-  constructor(message, causeObj){
+  constructor(name, message, causeObj){
     super(message, causeObj);
-    this.name = 'ErrorApi';
+    this.name = name || 'ErrorApi';
     this.status = causeObj.status || 500;
   }
 }
