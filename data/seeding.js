@@ -3,10 +3,10 @@ import 'dotenv/config';
 import pg from 'pg';
 
 const pool = new pg.Pool({
-  database: 'obookgroove',
-  user: 'spedata',
-  password: 'spedata',
-  port: 5432,
+  database: process.env.PG_DATABASE,
+  user: process.env.PG_USER,
+  password: process.env.PG_PASSWORD,
+  port: process.env.PG_PORT,
 });
 
 async function insertUsers() {

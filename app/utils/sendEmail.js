@@ -24,7 +24,7 @@ export const sendEmail = async (email, subject, html, text) => {
     });
 
     await transporter.sendMail({
-      from: "noreply@obookgroove.studio",
+      from: process.env.USER_EMAIL,
       to: email,
       subject,
       text,

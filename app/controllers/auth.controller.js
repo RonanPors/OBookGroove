@@ -55,8 +55,8 @@ export default {
       throw new ErrorApi('FAILED_SIGNUP', 'L\'utilisateur n\'a pas pu être créé.', {status: 400});
 
     // Envoi du mail de confirmation d'inscription
-    const subject = "Réinitialisation du mot de passe - O'BookGroove";
-    const html = `http://localhost:4000/confirm-signup/${user.id}/${confirm_token}`;
+    const subject = "Confirmation d'inscription - O'BookGroove";
+    const html = `${process.env.BASE_URL_CLIENT}/confirm-signup/${user.id}/${confirm_token}`;
     sendEmail(email, subject, html);
 
     // Retourner les deux tokens ici
@@ -252,7 +252,7 @@ export default {
       throw new ErrorApi('FAILED_RESET_PASSWORD', 'Erreur dans la génération du token.', {status: 500});
 
     const subject = "Réinitialisation du mot de passe - O'BookGroove";
-    const html = `http://localhost:4000/reset-password/${user.id}/${reset_token}`;
+    const html = `${process.env.BASE_URL_CLIENT}/reset-password/${user.id}/${reset_token}`;
     sendEmail(email, subject, html);
 
     return res.json({ ok: true });
