@@ -9,6 +9,13 @@ class UserHasBook extends CoreDatamapper {
     return rows;
 
   }
+
+  async findByBook(bookId) {
+
+    const rows = await this.client.from(this.tableName).where({ 'book_id': bookId });
+    return rows;
+
+  }
 }
 
 export default UserHasBook;

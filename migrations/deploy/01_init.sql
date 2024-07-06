@@ -34,8 +34,8 @@ CREATE TABLE "book" (
 
 CREATE TABLE "user_has_book" (
     "id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    "book_id" INT NOT NULL,
-    "user_id" INT NOT NULL,
+    "book_id" INT NOT NULL REFERENCES "book"("id") ON DELETE CASCADE,
+    "user_id" INT NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
     "is_active" BOOLEAN NOT NULL DEFAULT true,
     "is_favorite" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),

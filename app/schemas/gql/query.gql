@@ -1,0 +1,12 @@
+type Query {
+  
+  user(id: ID!): User
+
+  # UserSubLit est un tableau de User avec le totalCount
+  users(limit: Int, offset: Int): UserSubList
+
+  book(id: ID!): Book
+
+  books(limit: Int, offset: Int): BookSubList
+
+}

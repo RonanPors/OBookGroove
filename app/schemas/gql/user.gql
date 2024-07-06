@@ -1,0 +1,43 @@
+type User {
+
+  # Le '!' ne signifi pas qu'il est obligatoire de récupérer l'id
+  #  ça signifi que l'id récupéré doit forcément être du bon type et non pas null
+  id: ID!
+  pseudo: String
+  email: String
+  # Pourquoi String pour last_login ?
+  # Le resolver va transformer le timestamptz en une belle date
+  last_login: String
+  is_active: Boolean
+  refresh_token: String
+  reset_token: String
+  confirm_token: String
+  phone_number: String
+  profile_picture: String
+
+  # QUESTION ? Est-il possible de juste mettre Book à la place de UserHasBook
+  # Impossible, car books va récupérer seulement les accosiations
+  # Il faut donc un type intermédiaire pour récupérer les livres en fonction des données de ces associations
+  books: [UserHasBook]!
+
+}
+
+type UserSubList {
+
+  # Il faut forcément que l'objet items contienne un tableau avec au moins un objet User
+  items: [User!]!
+
+  # Il faut forcément que totalCount ne soit pas null
+  totalCount: Int!
+
+}
+
+input UpdateUserInput {
+
+  id: ID!
+  pseudo: String
+  email: String
+  phone_number: String
+  profile_picture: String
+
+}
