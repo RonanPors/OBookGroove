@@ -37,7 +37,7 @@ export default (err, req, res, next) => {
     }});
   }
 
-  return res.status(status).json({error: {
+  return res.status(status || err.status || 500).json({error: {
     ...templateError,
   }});
 };
