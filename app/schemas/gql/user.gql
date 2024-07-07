@@ -5,15 +5,15 @@ type User {
   id: Int!
   pseudo: String
   email: String
-  # Pourquoi String pour last_login ?
+  # Pourquoi String pour lastLogin ?
   # Le resolver va transformer le timestamptz en une belle date
-  last_login: String
-  is_active: Boolean
-  refresh_token: String
-  reset_token: String
-  confirm_token: String
-  phone_number: String
-  profile_picture: String
+  lastLogin: String
+  isActive: Boolean
+  refreshToken: String
+  resetToken: String
+  confirmToken: String
+  phoneNumber: String
+  profilePicture: String
 
   # QUESTION ? Est-il possible de juste mettre Book à la place de UserHasBook
   # Impossible, car books va récupérer seulement les accosiations
@@ -37,7 +37,7 @@ input UpdateUserInput {
   id: Int!
   pseudo: String
   email: String
-  phone_number: String
-  profile_picture: String
+  phoneNumber: String
+  profilePicture: String
 
 }

@@ -1,9 +1,9 @@
 type Mutation {
 
   updateUser(input: UpdateUserInput): User
-  deleteUser(id: ID!): User
+  deleteUser(id: Int!): User
 
   createUserHasBook(input: UserHasBookInputCreate): UserHasBook
-  deleteUserHasBook(id: ID!): UserHasBook
+  deleteUserHasBook(id: Int!): UserHasBook
 
 }

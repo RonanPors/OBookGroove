@@ -11,9 +11,9 @@ type UserHasBook {
 # A partir du moment ou l'une des deux clés de référence est supprimée (ON DELETE CASCADE)
 input UserHasBookInputCreate {
 
-  book_id: Int!
-  user_id: Int!
-  is_active: Boolean
-  is_favorite: Boolean
+  bookId: Int!
+  userId: Int!
+  isActive: Boolean
+  isFavorite: Boolean
 
 }

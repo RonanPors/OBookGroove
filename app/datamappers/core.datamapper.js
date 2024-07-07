@@ -1,3 +1,5 @@
+import * as changeKeys from 'change-case/keys';
+
 class CoreDatamapper {
 
   tableName;
@@ -20,7 +22,10 @@ class CoreDatamapper {
     const row = await this.client.from(this.tableName)
       .where({ id })
       .first();
-    return row;
+
+    const newRow = changeKeys.camelCase(row);
+
+    return newRow;
 
   }
 
@@ -29,7 +34,10 @@ class CoreDatamapper {
     const row = await this.client.from(this.tableName)
       .where({ email })
       .first();
-    return row;
+
+    const newRow = changeKeys.camelCase(row);
+
+    return newRow;
 
   }
 
@@ -38,7 +46,10 @@ class CoreDatamapper {
     const row = await this.client.from(this.tableName)
       .where({ pseudo })
       .first();
-    return row;
+
+    const newRow = changeKeys.camelCase(row);
+
+    return newRow;
 
   }
 
@@ -48,7 +59,10 @@ class CoreDatamapper {
     const row = await this.client.from(this.tableName)
       .where({ title })
       .first();
-    return row;
+
+    const newRow = changeKeys.camelCase(row);
+
+    return newRow;
 
   }
 
@@ -58,7 +72,10 @@ class CoreDatamapper {
     const row = await this.client.from(this.tableName)
       .where({ isbn })
       .first();
-    return row;
+
+    const newRow = changeKeys.camelCase(row);
+
+    return newRow;
 
   }
 
@@ -72,31 +89,41 @@ class CoreDatamapper {
 
     if (params?.offset) rows.offset(params.offset);
 
-    return await rows;
+    const newRows = rows.map((row) => changeKeys.camelCase(row));
+
+    return await newRows;
 
   }
 
   async create(inputData) {
 
+    const newInputData = changeKeys.snakeCase(inputData);
+
     const { rows: [row] } = await this.client.raw(`
       SELECT *
       FROM insert_${this.tableName}
       (?)
-    `, [inputData]);
+    `, [newInputData]);
 
-    return row;
+    const newRow = changeKeys.camelCase(row);
+
+    return newRow;
 
   }
 
   async update(inputData) {
 
+    const newInputData = changeKeys.snakeCase(inputData);
+
     const { rows: [row] } = await this.client.raw(`
       SELECT *
       FROM update_${this.tableName}
       (?)
-    `, [inputData]);
+    `, [newInputData]);
 
-    return row;
+    const newRow = changeKeys.camelCase(row);
+
+    return newRow;
 
   }
 
@@ -107,7 +134,9 @@ class CoreDatamapper {
       .del()
       .returning('*');
 
-    return row;
+    const newRow = changeKeys.camelCase(row);
+
+    return newRow;
 
   }
 

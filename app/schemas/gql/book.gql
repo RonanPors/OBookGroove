@@ -10,7 +10,7 @@ type Book {
   genre: [String]
   cover: String
   year: Int
-  number_of_pages: Int
+  numberOfPages: Int
 
   # QUESTION ? Est-il possible de juste mettre User à la place de UserHasBook
   # Impossible, car users va récupérer seulement les accosiations
