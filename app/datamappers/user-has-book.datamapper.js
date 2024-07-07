@@ -6,7 +6,19 @@ class UserHasBook extends CoreDatamapper {
 
   async findByUser(userId) {
 
-    const rows = await this.client.from(this.tableName).where({ 'user_id': userId });
+    const rows = await this.client.from(this.tableName)
+      .where({ 'user_id': userId });
+
+    const newRows = rows.map((row) => changeKeys.camelCase(row));
+
+    return newRows;
+
+  }
+
+  async findByBook(bookId) {
+
+    const rows = await this.client.from(this.tableName)
+      .where({ 'book_id': bookId });
 
     const newRows = rows.map((row) => changeKeys.camelCase(row));
 

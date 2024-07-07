@@ -34,8 +34,8 @@ export default {
     const salt = await bcrypt.genSalt(12);
     // Création d'un nouvel utilisateur
     const user = await userDatamapper.create({
-      ...req.body,
-      isActive: false,
+      pseudo,
+      email,
       password: await bcrypt.hash(password, salt),
     });
 
@@ -94,13 +94,13 @@ export default {
     // Génération des deux tokens (access & refresh)
     const response = {
       pseudo: user.pseudo,
-      accessToken: createAccessToken(claims),
+      accessToken: `Bearer ${createAccessToken(claims)}`,
       tokenType: 'Bearer',
       refreshToken: createRefreshToken(claims),
     };
 
     // Mettre à jour le refresh token
-    // Ceci mettra aussi à jour le login
+    // Ceci mettra aussi à jour le login parce que la valeur est true
     await userDatamapper.update({
       id: user.id,
       lastLogin: true,
@@ -113,7 +113,7 @@ export default {
 
     // Renvoyer aussi les tokens dans les cookies
     // httpOnly par défaut
-    res.cookie('accessTokenObg', `Bearer ${response.accessToken}`, {
+    res.cookie('accessTokenObg', response.accessToken, {
       httpOnly: true,
       secure: false,
       sameSite: 'Strict',
@@ -187,7 +187,7 @@ export default {
 
     // Génération des deux tokens (access & refresh)
     const response = {
-      accessToken: createAccessToken(claims),
+      accessToken: `Bearer ${createAccessToken(claims)}`,
       tokenType: 'Bearer',
       refreshToken: createRefreshToken(claims),
     };
@@ -204,7 +204,7 @@ export default {
 
     // Renvoyer aussi les tokens dans les cookies
     // httpOnly par défaut
-    res.cookie('accessTokenObg', `Bearer ${response.accessToken}`, {
+    res.cookie('accessTokenObg', response.accessToken, {
       httpOnly: true,
       secure: false,
       sameSite: 'Strict',
@@ -349,7 +349,7 @@ export default {
     // Génération des deux tokens (access & refresh)
     const response = {
       pseudo: user.pseudo,
-      accessToken: createAccessToken(claims),
+      accessToken: `Bearer ${createAccessToken(claims)}`,
       tokenType: 'Bearer',
       refreshToken: createRefreshToken(claims),
     };
@@ -367,7 +367,7 @@ export default {
 
     // Renvoyer aussi les tokens dans les cookies
     // httpOnly par défaut
-    res.cookie('accessTokenObg', `Bearer ${response.accessToken}`, {
+    res.cookie('accessTokenObg', response.accessToken, {
       httpOnly: true,
       secure: false,
       sameSite: 'Strict',

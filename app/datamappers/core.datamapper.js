@@ -8,9 +8,20 @@ class CoreDatamapper {
     this.client = client;
   }
 
+  async count() {
+
+    const { count } = await this.client.from(this.tableName)
+      .first()
+      .count('* as count');
+    return count;
+
+  }
+
   async findByPk(id) {
 
-    const row = await this.client.from(this.tableName).where({ id }).first();
+    const row = await this.client.from(this.tableName)
+      .where({ id })
+      .first();
 
     const newRow = changeKeys.camelCase(row);
 
@@ -20,7 +31,9 @@ class CoreDatamapper {
 
   async findByEmail(email) {
 
-    const row = await this.client.from(this.tableName).where({ email }).first();
+    const row = await this.client.from(this.tableName)
+      .where({ email })
+      .first();
 
     const newRow = changeKeys.camelCase(row);
 
@@ -30,7 +43,35 @@ class CoreDatamapper {
 
   async findByPseudo(pseudo) {
 
-    const row = await this.client.from(this.tableName).where({ pseudo }).first();
+    const row = await this.client.from(this.tableName)
+      .where({ pseudo })
+      .first();
+
+    const newRow = changeKeys.camelCase(row);
+
+    return newRow;
+
+  }
+
+  /* Méthode pour recuperer un livre en fonction de son titre */
+  async findByTitle(title) {
+
+    const row = await this.client.from(this.tableName)
+      .where({ title })
+      .first();
+
+    const newRow = changeKeys.camelCase(row);
+
+    return newRow;
+
+  }
+
+  /* Méthode pour récuperer un livre en fonction de son numéro ISBN */
+  async findByIsbn(isbn) {
+
+    const row = await this.client.from(this.tableName)
+      .where({ isbn })
+      .first();
 
     const newRow = changeKeys.camelCase(row);
 
@@ -40,13 +81,17 @@ class CoreDatamapper {
 
   async findAll(params) {
 
-    const rows = await this.client.from(this.tableName);
+    const rows = this.client.from(this.tableName);
 
     if (params?.where) rows.where(params.where);
 
+    if (params?.limit) rows.limit(params.limit);
+
+    if (params?.offset) rows.offset(params.offset);
+
     const newRows = rows.map((row) => changeKeys.camelCase(row));
 
-    return newRows;
+    return await newRows;
 
   }
 
@@ -84,8 +129,14 @@ class CoreDatamapper {
 
   async delete(id) {
 
-    const affectedRows = await this.client.from(this.tableName).where({ id }).del();
-    return !!affectedRows;
+    const [ row ] = await this.client.from(this.tableName)
+      .where({ id })
+      .del()
+      .returning('*');
+
+    const newRow = changeKeys.camelCase(row);
+
+    return newRow;
 
   }
 

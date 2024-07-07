@@ -5,7 +5,7 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "start": "NODE_ENV=production node .",
+    "start": "NODE_ENV=production node server.js",
     "dev": "NODE_ENV=development node --watch server.js",
     "resetDB": "sqitch revert -y; sqitch deploy; node ./data/seeding.js"
   },
@@ -13,14 +13,17 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@apollo/server": "^4.10.4",
     "bcrypt": "^5.1.1",
     "change-case": "^5.4.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
+    "dataloader": "^2.2.2",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-jsdoc-swagger": "^1.8.0",
+    "graphql": "^16.9.0",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "knex": "^3.1.0",

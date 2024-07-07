@@ -21,7 +21,7 @@ CREATE FUNCTION "insert_user"(json) RETURNS "user" AS $$
     $1->>'pseudo',
     $1->>'email',
     $1->>'password',
-    ($1->>'is_active')::BOOLEAN,
+    COALESCE(($1->>'is_active')::BOOLEAN, FALSE),
     $1->>'refresh_token',
     $1->>'reset_token',
     $1->>'confirm_token',
@@ -71,8 +71,8 @@ CREATE FUNCTION "insert_user_has_book"(json) RETURNS "user_has_book" AS $$
   ) VALUES (
     ($1->>'book_id')::INT,
     ($1->>'user_id')::INT,
-    ($1->>'is_active')::BOOLEAN,
-    ($1->>'is_favorite')::BOOLEAN
+    COALESCE(($1->>'is_active')::BOOLEAN, TRUE),
+    COALESCE(($1->>'is_favorite')::BOOLEAN, FALSE)
   ) RETURNING *
 
 $$ LANGUAGE sql
