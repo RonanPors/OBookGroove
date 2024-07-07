@@ -52,20 +52,28 @@ export function checkExpirationToken(decodedToken) {
  */
 export function checkRefreshTokenValidity(refreshToken, ignoreExpiration) {
 
-  // Vérifier si le token de refresh est valide ET non expiré
-  const decodedRefreshToken = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, {
-    ignoreExpiration,
-  });
+  //! jwt.verify() renverra une exception en cas d'erreur et il faut donc la gérer avec un try/catch
+  try {
 
-  // Si le token de refresh est non valide et/ou expiré, l'utilisateur sera considéré comme non authentifié
-  /*
-    Avec un système pareil, le refresh token peut avoir une expiration très longue
-    car il est regénéré à chaque fois du moment que les deux tokens sont valide
-  */
-  if (!decodedRefreshToken) return null;
+    // Vérifier si le token de refresh est valide
+    const decodedRefreshToken = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, {
+      ignoreExpiration,
+    });
 
-  // Si le token de refresh est valide ET non expiré
-  return decodedRefreshToken;
+    // Si le token de refresh est valide
+    return decodedRefreshToken;
+
+  } catch (err) {
+
+    console.log(err);
+    // Si le token de refresh est invalide, l'utilisateur sera considéré comme non authentifié
+    /*
+      Le refresh token peut avoir une expiration très longue
+      car il est regénéré à chaque fois du moment que les deux tokens sont valide
+    */
+    return null;
+
+  }
 
 }
 
@@ -84,16 +92,24 @@ export function checkAccessTokenValidity(accessToken, ignoreExpiration) {
   // Séparer le 'Bearer' du token 7
   const newAccessToken = accessToken.slice(7);
 
-  // Vérifier seulement si le token d'accès est valide ou non
-  const decodedAccessToken = jwt.verify(newAccessToken, ACCESS_TOKEN_SECRET, {
-    ignoreExpiration,
-  });
+  //! jwt.verify() renverra une exception en cas d'erreur et il faut donc la gérer avec un try/catch
+  try {
 
-  // Retourne null si le token d'accès est valide mais expiré
-  if (!decodedAccessToken) return null;
+    // Vérifier si le token d'accès est valide
+    const decodedAccessToken = jwt.verify(newAccessToken, ACCESS_TOKEN_SECRET, {
+      ignoreExpiration,
+    });
 
-  // Retourne le token décodé s'il est valide et non expiré
-  return decodedAccessToken;
+    // Retourne le token décodé s'il est valide
+    return decodedAccessToken;
+
+  } catch (err) {
+
+    console.log(err);
+    // Retourne null si le token d'accès est invalide
+    return null;
+
+  }
 
 }
 
