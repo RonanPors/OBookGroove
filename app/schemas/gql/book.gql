@@ -1,30 +1,30 @@
 type Book {
-	# Identifiant du livre
-	id: ID!
-	# Numéro ISBN du livre
-	isbn: String
-	# Titre du livre
-	title: String
-	# Auteur du livre
-	author: String
-	# Résumé du livre envoyé par Google Book
-	resume: String
-	# Tableau contenant les differents genres associés au livre
-	genre: [String]
-	# URL de la couverture du livre
-	cover: String
-	# Année de parution de l'édition du livre
-	year: Int
-	# Nombre de pages du livre
-	number_of_pages: Int
-	# Utilisateurs liés a un livre
-	users: [Book  HasUser]
+
+  # Le '!' ne signifi pas qu'il est obligatoire de récupérer l'id
+  #  ça signifi que l'id récupéré doit forcément être du bon type et non pas null
+  id: ID!
+  isbn: String
+  title: String
+  author: String
+  resume: String
+  genre: [String]
+  cover: String
+  year: Int
+  number_of_pages: Int
+
+  # QUESTION ? Est-il possible de juste mettre User à la place de UserHasBook
+  # Impossible, car users va récupérer seulement les accosiations
+  # Il faut donc un type intermédiaire pour récupérer les utilisateurs en fonction des données de ces associations
+  users: [BookHasUser]
+
 }
 
 type BookSubList {
+
 	# Il est impératif que l'objet items contienne un tableau lui même contenant au minimum un objet Book
 	items: [Book!]!
 
 	# totalCount ne peut être NULL
 	totalCount: Int!
+ 
 }
