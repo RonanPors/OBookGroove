@@ -1,3 +1,5 @@
+import * as changeKeys from 'change-case/keys';
+
 class CoreDatamapper {
 
   tableName;
@@ -9,21 +11,30 @@ class CoreDatamapper {
   async findByPk(id) {
 
     const row = await this.client.from(this.tableName).where({ id }).first();
-    return row;
+
+    const newRow = changeKeys.camelCase(row);
+
+    return newRow;
 
   }
 
   async findByEmail(email) {
 
     const row = await this.client.from(this.tableName).where({ email }).first();
-    return row;
+
+    const newRow = changeKeys.camelCase(row);
+
+    return newRow;
 
   }
 
   async findByPseudo(pseudo) {
 
     const row = await this.client.from(this.tableName).where({ pseudo }).first();
-    return row;
+
+    const newRow = changeKeys.camelCase(row);
+
+    return newRow;
 
   }
 
@@ -33,31 +44,41 @@ class CoreDatamapper {
 
     if (params?.where) rows.where(params.where);
 
-    return rows;
+    const newRows = rows.map((row) => changeKeys.camelCase(row));
+
+    return newRows;
 
   }
 
   async create(inputData) {
 
+    const newInputData = changeKeys.snakeCase(inputData);
+
     const { rows: [row] } = await this.client.raw(`
       SELECT *
       FROM insert_${this.tableName}
       (?)
-    `, [inputData]);
+    `, [newInputData]);
 
-    return row;
+    const newRow = changeKeys.camelCase(row);
+
+    return newRow;
 
   }
 
   async update(inputData) {
 
+    const newInputData = changeKeys.snakeCase(inputData);
+
     const { rows: [row] } = await this.client.raw(`
       SELECT *
       FROM update_${this.tableName}
       (?)
-    `, [inputData]);
+    `, [newInputData]);
 
-    return row;
+    const newRow = changeKeys.camelCase(row);
+
+    return newRow;
 
   }
 
