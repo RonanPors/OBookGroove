@@ -1,0 +1,30 @@
+type Book {
+	# Identifiant du livre
+	id: ID!
+	# Numéro ISBN du livre
+	isbn: String
+	# Titre du livre
+	title: String
+	# Auteur du livre
+	author: String
+	# Résumé du livre envoyé par Google Book
+	resume: String
+	# Tableau contenant les differents genres associés au livre
+	genre: [String]
+	# URL de la couverture du livre
+	cover: String
+	# Année de parution de l'édition du livre
+	year: Int
+	# Nombre de pages du livre
+	number_of_pages: Int
+	# Utilisateurs liés a un livre
+	users: [Book  HasUser]
+}
+
+type BookSubList {
+	# Il est impératif que l'objet items contienne un tableau lui même contenant au minimum un objet Book
+	items: [Book!]!
+
+	# totalCount ne peut être NULL
+	totalCount: Int!
+}

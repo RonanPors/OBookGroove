@@ -42,6 +42,26 @@ class CoreDatamapper {
 
   }
 
+  /* Méthode pour recuperer un livre en fonction de son titre */
+  async findByTitle(title) {
+
+    const row = await this.client.from(this.tableName)
+      .where({ title })
+      .first();
+    return row;
+
+  }
+
+  /* Méthode pour récuperer un livre en fonction de son numéro ISBN */
+  async findByIsbn(isbn) {
+
+    const row = await this.client.from(this.tableName)
+      .where({ isbn })
+      .first();
+    return row;
+
+  }
+
   async findAll(params) {
 
     const rows = this.client.from(this.tableName);
