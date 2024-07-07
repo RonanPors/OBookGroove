@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import authController from '../controllers/auth.controller.js';
+import spotifyController from '../controllers/spotify.controller.js';
 
 // Importation des schemas de validation des données.
 import userCreateSchema from '../schemas/Joi/user.signup.schema.js';
@@ -140,6 +141,33 @@ router.get('/auth/verify-reset-token/:userId([0-9]+)/:resetToken', controllerHan
  * @return {object} 400 - Bad request response
  */
 router.get('/auth/verify-confirm-token/:userId([0-9]+)/:confirmToken', controllerHandler(authController.verifyConfirmToken));
+
+/**
+ * GET /spotify/connect-user
+ * @summary Connecte un utilisateur à son compte spotify
+ * @tags Serveur de mise en relation avec spotifyAPI
+ * @return {object} 200 - success response - application/json
+ * @return {object} 400 - Bad request response
+ */
+router.get('/spotify/connect-user', controllerHandler(spotifyController.connectToSpotify));
+
+/**
+ * GET /spotify/callback
+ * @summary Récupération des tokens Spotify provenant de Spotify API uniquement
+ * @tags Serveur de mise en relation avec spotifyAPI
+ * @return {object} 200 - success response - application/json
+ * @return {object} 400 - Bad request response
+ */
+router.get('/spotify/callback', controllerHandler(spotifyController.callbackSpotify));
+
+/**
+ * GET /spotify/tokens
+ * @summary Rafraichire les tokens Spotify d'un utilisateurs
+ * @tags Serveur de mise en relation avec spotifyAPI
+ * @return {object} 200 - success response - application/json
+ * @return {object} 400 - Bad request response
+ */
+router.get('/spotify/tokens', controllerHandler(spotifyController.refreshSpotifyUserToken));
 
 router.use((_, __, next) => {
   next(new ErrorApi('NOT_FOUND', 'Resource not found', {status: 404}));
