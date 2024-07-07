@@ -2,7 +2,7 @@ type Book {
 
   # Le '!' ne signifi pas qu'il est obligatoire de récupérer l'id
   #  ça signifi que l'id récupéré doit forcément être du bon type et non pas null
-  id: ID!
+  id: Int!
   isbn: String
   title: String
   author: String

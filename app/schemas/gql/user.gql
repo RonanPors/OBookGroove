@@ -2,7 +2,7 @@ type User {
 
   # Le '!' ne signifi pas qu'il est obligatoire de récupérer l'id
   #  ça signifi que l'id récupéré doit forcément être du bon type et non pas null
-  id: ID!
+  id: Int!
   pseudo: String
   email: String
   # Pourquoi String pour last_login ?
@@ -34,7 +34,7 @@ type UserSubList {
 
 input UpdateUserInput {
 
-  id: ID!
+  id: Int!
   pseudo: String
   email: String
   phone_number: String
