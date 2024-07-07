@@ -1,4 +1,5 @@
 import CoreDatamapper from './core.datamapper.js';
+import * as changeKeys from 'change-case/keys';
 
 class UserHasBook extends CoreDatamapper {
   tableName = 'user_has_book';
@@ -6,7 +7,10 @@ class UserHasBook extends CoreDatamapper {
   async findByUser(userId) {
 
     const rows = await this.client.from(this.tableName).where({ 'user_id': userId });
-    return rows;
+
+    const newRows = rows.map((row) => changeKeys.camelCase(row));
+
+    return newRows;
 
   }
 }
