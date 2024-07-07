@@ -1,4 +1,4 @@
-import { checkAccessTokenValidity } from "../auth/jwt.utils";
+import { checkAccessTokenValidity } from "../auth/jwt.utils.js";
 
 /**
  * MW qui va vérifier si l'utilisateur possède un token d'accès valide et non expiré
@@ -15,6 +15,7 @@ export default function authMiddleware(req, _, next) {
     return next();
   }
 
+  // Vérifier que le token d'accès est valide ET non expiré
   req.auth = checkAccessTokenValidity(accessTokenObg, false);
 
   next();
