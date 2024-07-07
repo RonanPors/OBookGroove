@@ -21,7 +21,10 @@ type Book {
 
 type BookSubList {
 
-  items: [Book!]!
-  totalCount: Int!
+	# Il est impératif que l'objet items contienne un tableau lui même contenant au minimum un objet Book
+	items: [Book!]!
 
+	# totalCount ne peut être NULL
+	totalCount: Int!
+ 
 }
