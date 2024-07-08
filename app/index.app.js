@@ -1,5 +1,5 @@
 import express from 'express';
-// import pinoHttp from 'pino-http';
+import pinoHttp from 'pino-http';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 
@@ -31,7 +31,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// app.use(pinoHttp());
+app.use(pinoHttp());
 
 // Utilisation de swagger
 docMiddleware(app);
