@@ -110,5 +110,6 @@ export default {
       res.send('Nouveaux tokens enregistrés dans les cookies');
     };
   },
+  //? Fonction de vérification des tokens
   //? Fonction de récupération des musiques pour un utilisateur
 };
