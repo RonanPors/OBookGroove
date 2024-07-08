@@ -1,0 +1,20 @@
+type UserHasBook {
+
+  id: Int
+  bookId: Int
+  userId: Int
+  isActive: Boolean
+  isFavorite: Boolean
+
+}
+
+# Attention, un enregistrement dans la table d'association se supprime tout seul
+# A partir du moment ou l'une des deux clés de référence est supprimée (ON DELETE CASCADE)
+input UserHasBookInputCreate {
+
+  bookId: Int!
+  userId: Int!
+  isActive: Boolean
+  isFavorite: Boolean
+
+}

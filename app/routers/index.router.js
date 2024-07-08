@@ -121,6 +121,16 @@ router.get('/auth/generate', controllerHandler(authController.generate));
 router.get('/auth/tokens', controllerHandler(authController.getTokens));
 
 /**
+ * GET /auth/logout
+ * @summary Déconnecter l'utilisateur en supprimant ses tokens dans les cookies
+ * @description Pensez à vous connecter à un compte avec la route /auth/signin pour avoir des tokens dans vos cookies
+ * @tags Serveur d'authentification
+ * @return {object} 200 - success response - application/json
+ * @return {object} 400 - Bad request response
+ */
+router.get('/auth/logout', controllerHandler(authController.logout));
+
+/**
  * GET /auth/verify-reset-token/{userId}/{resetToken}
  * @summary Vérifier le token de réinitialisation en fonction de l'id utilisateur
  * @tags Serveur d'authentification
