@@ -1,6 +1,3 @@
-# Type intermédiaire pour pouvoir récupérer précisément les livres
-# depuis les données du parent qui est la table d'associations
-# Le parent est la table d'associations, je précise bien car c'est important
 type UserHasBook {
 
   id: Int

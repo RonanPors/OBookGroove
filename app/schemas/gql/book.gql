@@ -12,9 +12,6 @@ type Book {
   year: Int
   numberOfPages: Int
 
-  # QUESTION ? Est-il possible de juste mettre User à la place de UserHasBook
-  # Impossible, car users va récupérer seulement les accosiations
-  # Il faut donc un type intermédiaire pour récupérer les utilisateurs en fonction des données de ces associations
   users: [User]!
 
 }
