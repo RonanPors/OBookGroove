@@ -18,7 +18,8 @@ type User {
   # QUESTION ? Est-il possible de juste mettre Book à la place de UserHasBook
   # Impossible, car books va récupérer seulement les accosiations
   # Il faut donc un type intermédiaire pour récupérer les livres en fonction des données de ces associations
-  books: [UserHasBook]!
+  # books: [UserHasBook]!
+  books: [Book]!
 
 }
 

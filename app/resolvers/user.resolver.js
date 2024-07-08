@@ -10,6 +10,16 @@ export default {
 
   // Le parent est user, donc id est l'id de l'utilisateur
   // Nous récupérons les enregistrements de la table d'associations
-  books: async ({ id }) => await userHasBookDatamapper.findByUser(id),
+  async books ({ id }, _, { bookLoader }) {
+
+    const books = await userHasBookDatamapper.findByUser(id);
+
+    const newBooks = await Promise.all(
+      books.map((book) => bookLoader.load(book.bookId)),
+    );
+
+    return newBooks;
+
+  },
 
 };

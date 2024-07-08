@@ -3,7 +3,11 @@
 # Le parent est la table d'associations, je précise bien car c'est important
 type UserHasBook {
 
-  book: Book
+  id: Int
+  bookId: Int
+  userId: Int
+  isActive: Boolean
+  isFavorite: Boolean
 
 }
 
