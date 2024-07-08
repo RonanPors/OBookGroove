@@ -18,6 +18,7 @@ async function insertUsers() {
         "pseudo",
         "email",
         "password",
+        "is_active",
         "refresh_token"
     )
     VALUES
@@ -25,18 +26,21 @@ async function insertUsers() {
         'Max',
         'max@oclock.io',
         '$2b$12$bZaufSjg9KLuV9b0qqt6/.Uo97.uHF95k2TYQnZDDK8eLOfzXq.2i',
+        'true',
         'refresh_token'
     ),-- Antestdefou3*
     (
         'Arnaud',
         'arnaud@oclock.io',
         '$2b$12$bZaufSjg9KLuV9b0qqt6/.Uo97.uHF95k2TYQnZDDK8eLOfzXq.2i',
+        'true',
         'refresh_token'
     ), -- Antestdefou3*
     (
         'Ronane',
         'ronane@oclock.io',
         '$2b$12$bZaufSjg9KLuV9b0qqt6/.Uo97.uHF95k2TYQnZDDK8eLOfzXq.2i',
+        'true',
         'refresh_token'
     ) -- Antestdefou3*
     RETURNING id

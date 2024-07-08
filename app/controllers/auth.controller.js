@@ -226,11 +226,25 @@ export default {
     const { accessTokenObg, refreshTokenObg } = req.cookies;
 
     // Renvoyer les tokens en JSON
-    res.json({
+    return res.json({
       accessTokenObg,
       tokenType: 'Bearer',
       refreshTokenObg,
     });
+
+  },
+
+  logout(req, res) {
+
+    // Récupérer les tokens depuis les cookies de la requête
+    const { accessTokenObg, refreshTokenObg } = req.cookies;
+
+    // Nettoyer les cookies
+    if (accessTokenObg) res.clearCookie('accessTokenObg');
+
+    if (refreshTokenObg) res.clearCookie('refreshTokenObg');
+
+    return res.json({ ok: true });
 
   },
 
