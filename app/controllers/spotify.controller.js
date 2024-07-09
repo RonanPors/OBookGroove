@@ -1,7 +1,11 @@
-import crypto from 'crypto';
+
 import ErrorApi from '../errors/api.error.js';
 import queryString from 'node:querystring';
-import bookGenerator from '../utils/booksGenerator.js';
+// import { getUserTopTraks } from '../utils/spotifyUtils/getUserTopTraks.js';
+import booksGenerator from '../utils/booksGenerator.js';
+import { generateRandomString } from '../utils/generateRandomString.js';
+
+const state = generateRandomString(64);
 
 export default {
 
@@ -11,18 +15,7 @@ export default {
     const redirect_uri = process.env.SPOTIFY_REDIRECT_URI;
     const spotifyAuthUrl = process.env.SPOTIFY_AUTHORIZE;
 
-    const generateRandomString = (length) => {
-      return crypto
-        .randomBytes(60)
-        .toString('hex')
-        .slice(0, length);
-    };
-
-    const state = generateRandomString(64);
-    const stateKey = 'spotify_auth_state';
     const scope = 'user-read-private user-read-email playlist-read-private user-top-read user-library-read';
-
-    res.cookie(stateKey, state);
 
     const params = {
       response_type: 'code',
@@ -30,9 +23,12 @@ export default {
       scope: scope,
       redirect_uri: redirect_uri,
       state: state,
+      show_dialog: true,
     };
 
-    return res.redirect(spotifyAuthUrl + queryString.stringify(params));
+    return res.json({
+      uri: spotifyAuthUrl + queryString.stringify(params),
+    });
 
   },
 
@@ -43,22 +39,21 @@ export default {
 
     const { code, state } = req.query;
     const stateKey = 'spotify_auth_state';
-    const storedState = req.cookie ? req.cookies[stateKey] : null;
+    const storedState = state;
     const spotifyClientId = process.env.SPOTIFY_APP_CLIENT_ID;
     const spotifyClientSecret = process.env.SPOTIFY_APP_CLIENT_SECRET;
     const redirect_uri = process.env.SPOTIFY_REDIRECT_URI;
 
     if (state !== storedState || !state ) {
-      throw new ErrorApi('FAILED_SPOTIFY_AUTH', 'État de la requête invalide.', { status: 401 });
+      throw new ErrorApi('FAILED_SPOTIFY_AUTH', 'État de la requête invalide 1.', { status: 401 });
     }
 
     res.clearCookie(stateKey);
-
     const authOptions = {
       method: 'POST',
       headers: {
         'content-type': 'application/x-www-form-urlencoded',
-        'authorization': 'Basic'+ Buffer.from(spotifyClientId + ':' + spotifyClientSecret).toString('base64'),
+        'Authorization': 'Basic '+ Buffer.from(spotifyClientId + ':' + spotifyClientSecret).toString('base64'),
       },
       body: new URLSearchParams({
         code: code,
@@ -81,7 +76,7 @@ export default {
     res.cookie('refresh_token_spotify', data.refresh_token, { httpOnly: true, secure: false }); //! A passer en secure true en production
 
     // Utilisation d'un service qui retourne des livres refresh ou en BDD
-    const suggestBooks = await Promise.all(bookGenerator.init(req));
+    const suggestBooks = await booksGenerator.init(req.cookies);
 
     if (!suggestBooks)
       throw new ErrorApi('FAILED_BOOKS_SUGGEST', 'Échec de récupération des livres de suggestion.', { status: 500 });
@@ -125,38 +120,5 @@ export default {
 
       res.json({ ok: true});
     };
-  },
-
-  async getUserTopTraks(req, res) {
-
-    let datasTable = [];
-    const accessToken = req.cookie['access_token_spotify'];
-    const spotifyUserTrackUrl = process.env.SPOTIFY_USER_TRACKS;
-
-    const response = await fetch(spotifyUserTrackUrl, {
-      headers: {
-        Authorization: 'Bearer ' + accessToken,
-      },
-    });
-
-    const data = await response.json();
-
-    if (!data || data.items.length === 0)
-      throw new ErrorApi('FAILED_SPOTIFY_TRACKS', 'Échec de récupération des musiques Spotify.', { status: 500 });
-
-    data.items.map(async (track) => {
-
-      const obj = {
-        artistName: track.artists.map((artist) => artist.name),
-        artistId: track.artists.map((artist) => artist.id),
-        trackIsrc: track.external_ids.isrc,
-        trackId: track.id,
-        trackName: track.name,
-        durationSeconds: Math.floor(track.duration_ms / 1000),
-      };
-      datasTable.push(obj);
-    });
-
-    return datasTable;
   },
 };
