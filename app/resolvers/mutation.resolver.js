@@ -9,7 +9,8 @@ export default {
 
     const updatedUser = await userDatamapper.update(input);
 
-    if (!updatedUser) throw notFoundError(`No User found with id ${input.id}.`);
+    if (!updatedUser)
+      throw notFoundError(`Erreur lors de la mise à jour de l'utilisateur.`);
 
     return updatedUser;
 
@@ -19,9 +20,10 @@ export default {
 
     if (!user) throw unauthorizedError('Missing authentication.');
 
-    const deletedUser = await userDatamapper.delete(id);
+    const deletedUser = await userDatamapper.delete({ id });
 
-    if (!deletedUser) throw notFoundError(`No User found with id ${id}.`);
+    if (!deletedUser)
+      throw notFoundError(`Erreur lors de la suppression de l'utilisateur.`);
 
     return deletedUser;
 
@@ -33,19 +35,37 @@ export default {
 
     const createdUserHasBook = await userHasBookDatamapper.create(input);
 
-    if (!createdUserHasBook) throw notFoundError(`No User Has Book found with id ${input.id}.`);
+    if (!createdUserHasBook)
+      throw notFoundError(`Erreur lors de la création de l'association UserHasBook.`);
 
     return createdUserHasBook;
 
   },
 
-  async deleteUserHasBook(_, { id }, { user }) {
+  async updateUserHasBook(_, { input }, { user }) {
 
     if (!user) throw unauthorizedError('Missing authentication.');
 
-    const deletedUserHasBook = await userHasBookDatamapper.delete(id);
+    const updatedUserHasBook = await userHasBookDatamapper.update(input);
 
-    if (!deletedUserHasBook) throw notFoundError(`No User Has Book found with id ${id}.`);
+    if (!updatedUserHasBook)
+      throw notFoundError(`Erreur lors de la mise à jour de l'association UserHasBook.`);
+
+    return updatedUserHasBook;
+
+  },
+
+  async deleteUserHasBook(_, { bookId, userId }, { user }) {
+
+    if (!user) throw unauthorizedError('Missing authentication.');
+
+    const deletedUserHasBook = await userHasBookDatamapper.delete({
+      bookId,
+      userId,
+    });
+
+    if (!deletedUserHasBook)
+      throw notFoundError(`Erreur lors de la suppresion de l'association UserHasBook.`);
 
     return deletedUserHasBook;
 

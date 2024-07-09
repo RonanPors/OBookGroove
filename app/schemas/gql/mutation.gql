@@ -4,6 +4,7 @@ type Mutation {
   deleteUser(id: Int!): User
 
   createUserHasBook(input: UserHasBookInputCreate): UserHasBook
-  deleteUserHasBook(id: Int!): UserHasBook
+  updateUserHasBook(input: UserHasBookInputUpdate): UserHasBook
+  deleteUserHasBook(bookId: Int!, userId: Int!): UserHasBook
 
 }
