@@ -141,28 +141,6 @@ router.get('/auth/tokens', controllerHandler(authController.getTokens));
 router.get('/auth/logout', controllerHandler(authController.logout));
 
 /**
- * GET /auth/verify-reset-token/{userId}/{resetToken}
- * @summary Vérifier le token de réinitialisation en fonction de l'id utilisateur
- * @tags Serveur d'authentification
- * @param {number} userId.path.required - ID de l'utilisateur
- * @param {string} resetToken.path.required - Token de réinitialisation utilisateur
- * @return {object} 200 - success response - application/json
- * @return {object} 400 - Bad request response
- */
-router.get('/auth/verify-reset-token/:userId([0-9]+)/:resetToken', controllerHandler(authController.verifyResetToken));
-
-/**
- * GET /auth/verify-confirm-token/{userId}/{confirmToken}
- * @summary Vérifier le token de confirmation en fonction de l'id utilisateur
- * @tags Serveur d'authentification
- * @param {number} userId.path.required - ID de l'utilisateur
- * @param {string} confirmToken.path.required - Token de confirmation utilisateur
- * @return {object} 200 - success response - application/json
- * @return {object} 400 - Bad request response
- */
-router.get('/auth/verify-confirm-token/:userId([0-9]+)/:confirmToken', controllerHandler(authController.verifyConfirmToken));
-
-/**
  * GET /spotify/connect-user
  * @summary Connecte un utilisateur à son compte spotify
  * @tags Serveur de mise en relation avec spotifyAPI
