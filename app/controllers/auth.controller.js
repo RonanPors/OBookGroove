@@ -227,9 +227,9 @@ export default {
 
     // Renvoyer les tokens en JSON
     return res.json({
-      accessTokenObg,
+      accessTokenObg: accessTokenObg || null,
       tokenType: 'Bearer',
-      refreshTokenObg,
+      refreshTokenObg: refreshTokenObg || null,
     });
 
   },
@@ -305,43 +305,9 @@ export default {
 
   },
 
-  // Sert à vérifier si l'url est bonne et que le front peut afficher quelque chose ou un NOT FOUND 404
-  async verifyResetToken(req, res) {
-
-    const { userId, resetToken } = req.params;
-
-    const user = await userDatamapper.findByPk(userId);
-
-    if (!user)
-      throw new ErrorApi('FAILED_VERIFY_RESET_TOKEN', 'L\'utilisateur est inexistant.', {status: 400});
-
-    if (user.resetToken !== resetToken)
-      throw new ErrorApi('FAILED_VERIFY_RESET_TOKEN', 'Les tokens de réinitialisation ne sont pas identiques.', {status: 498});
-
-    return res.json({ ok: true });
-
-  },
-
-  // Sert à vérifier si l'url est bonne et que le front peut afficher quelque chose ou un NOT FOUND 404
-  async verifyConfirmToken(req, res) {
-
-    const { userId, confirmToken } = req.params;
-
-    const user = await userDatamapper.findByPk(userId);
-
-    if (!user)
-      throw new ErrorApi('FAILED_VERIFY_CONFIRM_TOKEN', 'L\'utilisateur est inexistant.', {status: 400});
-
-    if (user.confirmToken !== confirmToken)
-      throw new ErrorApi('FAILED_VERIFY_CONFIRM_TOKEN', 'Les tokens de confirmation ne sont pas identiques.', {status: 498});
-
-    return res.json({ ok: true });
-
-  },
-
   async confirmSignup(req, res) {
 
-    const { userId, confirmToken } = req.body;
+    const { userId, confirmToken } = req.params;
 
     const user = await userDatamapper.findByPk(userId);
 

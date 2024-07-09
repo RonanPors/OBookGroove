@@ -81,13 +81,23 @@ class CoreDatamapper {
 
   async findAll(params) {
 
-    const rows = this.client.from(this.tableName);
+    // Transformation du where en snake_case
+    const where = changeKeys.snakeCase(params.where);
 
-    if (params?.where) rows.where(params.where);
+    const query = this.client.from(this.tableName);
 
-    if (params?.limit) rows.limit(params.limit);
+    if (where) query.where(where);
 
-    if (params?.offset) rows.offset(params.offset);
+    if (params?.limit) query.limit(params.limit);
+
+    if (params?.offset) query.offset(params.offset);
+
+    if (params?.order) query.orderBy(
+      params.order.column,
+      params.order.direction,
+    );
+
+    const rows = await query;
 
     const newRows = rows.map((row) => changeKeys.camelCase(row));
 

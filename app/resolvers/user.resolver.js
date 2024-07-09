@@ -22,4 +22,27 @@ export default {
 
   },
 
+  async favoriteBooks({ id }, { limit, offset }, { bookLoader }) {
+
+    const books = await userHasBookDatamapper.findAll({
+      limit,
+      offset,
+      where: {
+        userId: id,
+        isFavorite: true,
+      },
+      order: {
+        column: 'book_id',
+        direction: 'asc',
+      },
+    });
+
+    const newBooks = await Promise.all(
+      books.map((book) => bookLoader.load(book.bookId)),
+    );
+
+    return newBooks;
+
+  },
+
 };

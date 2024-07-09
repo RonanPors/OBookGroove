@@ -6,7 +6,6 @@ import spotifyController from '../controllers/spotify.controller.js';
 import userCreateSchema from '../schemas/Joi/user.signup.schema.js';
 import userAuthSchema from '../schemas/Joi/user.signin.schema.js';
 import userResetPassSchema from '../schemas/Joi/user.reset.pass.schema.js';
-import userConfirmAccountSchema from '../schemas/Joi/user.confirm.account.schema.js';
 // Importation du middleware de validation des données.
 import validationMiddleware from '../middlewares/validation.middleware.js';
 //Importation du middleware de gestion des erreurs controllers.
@@ -70,7 +69,7 @@ router.post('/auth/reset-password', validationMiddleware(userResetPassSchema.ste
 
 /**
  * POST /auth/reset-password/{userId}/{resetToken}
- * @summary Réinitialisation du mot de passe de l'utilisateur
+ * @summary Vérification et Réinitialisation du mot de passe de l'utilisateur
  * @tags Serveur d'authentification
  * @param {number} userId.path.required - ID de l'utilisateur
  * @param {string} resetToken.path.required - Reset token de l'utilisateur
@@ -86,23 +85,19 @@ router.post('/auth/reset-password', validationMiddleware(userResetPassSchema.ste
 router.post('/auth/reset-password/:userId([0-9]+)/:resetToken', validationMiddleware(userResetPassSchema.step2, 'body'), controllerHandler(authController.resetPasswordConfirm));
 
 /**
- * POST /auth/confirm-signup
- * @summary Confirmation du compte de l'utilisateur
+ * GET /auth/confirm-signup/{userId}/{confirmToken}
+ * @summary Vérification et Confirmation du compte de l'utilisateur
  * @tags Serveur d'authentification
- * @param {object} request.body.required - ID et token de confirmation de l'utilisateur
- * @example request - example payload
- * {
- *   "userId": "1",
- *   "confirmToken": "Ajoutez un token de confirmation ici"
- * }
+ * @param {number} userId.path.required - ID de l'utilisateur
+ * @param {string} confirmToken.path.required - Token de confirmation d'inscription de l'utilisateur
  * @return {object} 200 - success response - application/json
  * @return {object} 400 - Bad request response
  */
-router.post('/auth/confirm-signup', validationMiddleware(userConfirmAccountSchema, 'body'), controllerHandler(authController.confirmSignup));
+router.get('/auth/confirm-signup/:userId([0-9]+)/:confirmToken', controllerHandler(authController.confirmSignup));
 
 /**
  * GET /auth/generate
- * @summary Générer de nouveaux tokens depuis les anciens.
+ * @summary Vérifier et Générer de nouveaux tokens depuis les anciens.
  * @description Pensez à vous connecter à un compte avec la route /auth/signin pour avoir des tokens dans vos cookies
  * @tags Serveur d'authentification
  * @return {object} 200 - success response - application/json
