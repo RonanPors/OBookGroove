@@ -1,3 +1,4 @@
+import { unauthorizedError, notFoundError } from '../errors/gql.error.js';
 import { userHasBookDatamapper } from '../datamappers/index.datamapper.js';
 import { isoToDate } from '../utils/isoToDate.js';
 
@@ -22,7 +23,9 @@ export default {
 
   },
 
-  async favoriteBooks({ id }, { limit, offset }, { bookLoader }) {
+  async favoriteBooks({ id }, { limit, offset }, { bookLoader, user }) {
+
+    if (!user) throw unauthorizedError('Missing authentication.');
 
     const books = await userHasBookDatamapper.findAll({
       limit,
@@ -41,11 +44,16 @@ export default {
       books.map((book) => bookLoader.load(book.bookId)),
     );
 
+    if (!newBooks || !books)
+      throw notFoundError(`No favorite books found.`);
+
     return newBooks;
 
   },
 
-  async currentBooks({ id }, {limit, offset }, { bookLoader}) {
+  async currentBooks({ id }, {limit, offset }, { bookLoader, user }) {
+
+    if (!user) throw unauthorizedError('Missing authentication.');
 
     const books = await userHasBookDatamapper.findAll({
       limit,
@@ -64,7 +72,10 @@ export default {
       books.map((book) => bookLoader.load(book.bookId)),
     );
 
+    if (!newBooks || !books)
+      throw notFoundError(`No current books found.`);
+
     return newBooks;
-  }
+  },
 
 };
