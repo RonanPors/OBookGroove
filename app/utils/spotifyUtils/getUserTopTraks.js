@@ -1,19 +1,21 @@
+// Fonction de récupération des Top Musiques de notre utilisateur.
+
 import ErrorApi from "../../errors/api.error.js";
 
 export async function getUserTopTraks(cookies) {
-  console.log(cookies);
+
   let datasTable = [];
   const accessToken = cookies['access_token_spotify'];
   const spotifyUserTrackUrl = process.env.SPOTIFY_USER_TRACKS;
-  console.log('1.5');
+
   const response = await fetch(spotifyUserTrackUrl, {
     headers: {
       Authorization: 'Bearer ' + accessToken,
     },
   });
-  console.log('2');
+
   const data = await response.json();
-  console.log('3');
+
   if (!data || data.items.length === 0)
     throw new ErrorApi('FAILED_SPOTIFY_TRACKS', 'Échec de récupération des musiques Spotify.', { status: 500 });
 
@@ -29,6 +31,6 @@ export async function getUserTopTraks(cookies) {
     };
     datasTable.push(obj);
   });
-  console.log('4');
+
   return datasTable;
 }
