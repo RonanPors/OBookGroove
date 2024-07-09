@@ -1,12 +1,10 @@
 type Query {
-  
-  user(id: Int!): User
+	user(id: Int!): User
 
-  # UserSubLit est un tableau de User avec le totalCount
-  users(limit: Int, offset: Int): UserSubList
+	# UserSubLit est un tableau de User avec le totalCount
+	users(limit: Int, offset: Int): UserSubList
 
-  book(id: Int!): Book
-
-  books(limit: Int, offset: Int): BookSubList
-
+	book(id: Int!): Book
+	#
+	books(limit: Int, offset: Int): BookSubList
 }
