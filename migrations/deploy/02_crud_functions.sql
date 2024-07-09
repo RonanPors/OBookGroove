@@ -125,12 +125,10 @@ VOLATILE STRICT;
 CREATE FUNCTION "update_user_has_book"(json) RETURNS "user_has_book" AS $$
 
   UPDATE "user_has_book" SET
-    "book_id" = COALESCE(($1->>'book_id')::INT, "book_id"),
-    "user_id" = COALESCE(($1->>'user_id')::INT, "user_id"),
     "is_active" = COALESCE(($1->>'is_active')::BOOLEAN, "is_active"),
     "is_favorite" = COALESCE(($1->>'is_favorite')::BOOLEAN, "is_favorite"),
     "updated_at" = now()
-  WHERE "id" = ($1->>'id')::INT
+  WHERE "book_id" = ($1->>'book_id')::INT AND "user_id" = ($1->>'user_id')::INT
   RETURNING *
 
 $$ LANGUAGE sql

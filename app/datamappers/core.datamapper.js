@@ -137,10 +137,12 @@ class CoreDatamapper {
 
   }
 
-  async delete(id) {
+  async delete(where) {
+
+    const newWhere = changeKeys.snakeCase(where);
 
     const [ row ] = await this.client.from(this.tableName)
-      .where({ id })
+      .where(newWhere)
       .del()
       .returning('*');
 

@@ -18,3 +18,12 @@ input UserHasBookInputCreate {
   isFavorite: Boolean
 
 }
+
+input UserHasBookInputUpdate {
+
+  bookId: Int!
+  userId: Int!
+  isActive: Boolean
+  isFavorite: Boolean
+
+}
