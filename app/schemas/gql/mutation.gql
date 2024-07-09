@@ -7,4 +7,10 @@ type Mutation {
   updateUserHasBook(input: UserHasBookInputUpdate): UserHasBook
   deleteUserHasBook(bookId: Int!, userId: Int!): UserHasBook
 
+  createSurvey(input: SurveyInputCreate): Survey
+  # Attention, l'update nécéssite le renvoi de tout le formulaire mis à jour
+  updateSurvey(input: SurveyInputUpdate): Survey
+  # Ici, il faut l'id du survey car le user_id sera associé à plusieurs surveys éventuellement
+  deleteSurvey(id: Int!): Survey
+
 }

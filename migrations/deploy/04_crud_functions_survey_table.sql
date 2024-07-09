@@ -25,7 +25,7 @@ CREATE FUNCTION "update_survey"(json) RETURNS "survey" AS $$
   UPDATE "survey" SET
     "question_answer" = COALESCE($1->>'question_answer', "question_answer"),
     "updated_at" = now()
-  WHERE "user_id" = ($1->>'user_id')::INT
+  WHERE "id" = ($1->>'id')::INT
   RETURNING *
 
 $$ LANGUAGE sql

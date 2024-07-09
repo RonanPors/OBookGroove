@@ -1,0 +1,22 @@
+type Survey {
+
+  id: Int
+  userId: Int
+  questionAnswer: JSON
+
+}
+
+input SurveyInputCreate {
+
+  userId: Int!
+  questionAnswer: JSON
+
+}
+
+input SurveyInputUpdate {
+
+  id: Int!
+  userId: Int
+  questionAnswer: JSON
+
+}
