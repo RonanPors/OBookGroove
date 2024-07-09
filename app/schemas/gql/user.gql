@@ -16,7 +16,7 @@ type User {
   profilePicture: String
 
   books: [Book]!
-  favoriteBooks: [Book]!
+  favoriteBooks(limit: Int, offset: Int): [Book]!
 
 }
 
