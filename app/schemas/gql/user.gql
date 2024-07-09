@@ -1,41 +1,36 @@
 type User {
+	# Le '!' ne signifi pas qu'il est obligatoire de récupérer l'id
+	#  ça signifi que l'id récupéré doit forcément être du bon type et non pas null
+	id: Int!
+	pseudo: String
+	email: String
+	# Pourquoi String pour lastLogin ?
+	# Le resolver va transformer le timestamptz en une belle date
+	lastLogin: String
+	isActive: Boolean
+	refreshToken: String
+	resetToken: String
+	confirmToken: String
+	phoneNumber: String
+	profilePicture: String
 
-  # Le '!' ne signifi pas qu'il est obligatoire de récupérer l'id
-  #  ça signifi que l'id récupéré doit forcément être du bon type et non pas null
-  id: Int!
-  pseudo: String
-  email: String
-  # Pourquoi String pour lastLogin ?
-  # Le resolver va transformer le timestamptz en une belle date
-  lastLogin: String
-  isActive: Boolean
-  refreshToken: String
-  resetToken: String
-  confirmToken: String
-  phoneNumber: String
-  profilePicture: String
-
-  books: [Book]!
-  favoriteBooks(limit: Int, offset: Int): [Book]!
-
+	books: [Book]!
+	favoriteBooks(limit: Int, offset: Int): [Book]!
+	currentBooks(limit: Int, offset: Int): [Book]!
 }
 
 type UserSubList {
+	# Il faut forcément que l'objet items contienne un tableau avec au moins un objet User
+	items: [User!]!
 
-  # Il faut forcément que l'objet items contienne un tableau avec au moins un objet User
-  items: [User!]!
-
-  # Il faut forcément que totalCount ne soit pas null
-  totalCount: Int!
-
+	# Il faut forcément que totalCount ne soit pas null
+	totalCount: Int!
 }
 
 input UpdateUserInput {
-
-  id: Int!
-  pseudo: String
-  email: String
-  phoneNumber: String
-  profilePicture: String
-
+	id: Int!
+	pseudo: String
+	email: String
+	phoneNumber: String
+	profilePicture: String
 }
