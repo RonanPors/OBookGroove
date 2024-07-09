@@ -362,4 +362,26 @@ export default {
 
   },
 
+  async verifyRecaptcha(req, res) {
+
+    const secretKey = process.env.SECRET_KEY_RECAPTCHA;
+    const { token } = req.body;
+
+    const verificationURL = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${token}`;
+
+    const response = await fetch(verificationURL, {
+      method: 'POST',
+    });
+    const data = await response.json();
+
+    if (!data.success)
+      throw new ErrorApi('FAILED_VERIFY_RECAPTCHA', 'reCAPTCHA verification failed.', {status: 498});
+
+    res.json({
+      success: true,
+      message: 'reCAPTCHA verification successful',
+    });
+
+  },
+
 };
