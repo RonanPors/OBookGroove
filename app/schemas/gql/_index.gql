@@ -1,0 +1,4 @@
+# Ce fichier sert à y ajouter du contenu qui doit être tout en haut du typeDefs
+# Il sert à ajouter du contenu global
+# Ce fichier doit rester tout en haut du dossier gql, c'est très important
+scalar JSON

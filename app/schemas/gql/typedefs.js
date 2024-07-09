@@ -18,7 +18,7 @@ async function readGqlFiles() {
     );
 
     // Contenu total join pour ne faire qu'une chaîne de caractères
-    return 'scalar JSON\n' + fileContents.join('\n');
+    return fileContents.join('\n');
 
   } catch (err) {
     console.error('Error reading .gql files:', err);
