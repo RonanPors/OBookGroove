@@ -1,5 +1,5 @@
 import { unauthorizedError, notFoundError } from '../errors/gql.error.js';
-import { userHasBookDatamapper } from '../datamappers/index.datamapper.js';
+import { surveyDatamapper, userHasBookDatamapper } from '../datamappers/index.datamapper.js';
 import { isoToDate } from '../utils/isoToDate.js';
 
 export default {
@@ -51,7 +51,7 @@ export default {
 
   },
 
-  async currentBooks({ id }, {limit, offset }, { bookLoader, user }) {
+  async currentBooks({ id }, { limit, offset }, { bookLoader, user }) {
 
     if (!user) throw unauthorizedError('Missing authentication.');
 
@@ -76,6 +76,26 @@ export default {
       throw notFoundError(`No current books found.`);
 
     return newBooks;
+  },
+
+  async surveys({ id }, _, { user }) {
+
+    if (!user) throw unauthorizedError('Missing authentication.');
+
+    const surveys = await surveyDatamapper.findAll({
+      where: {
+        userId: id,
+      },
+    });
+
+    if (!surveys)
+      throw notFoundError(`No current surveys found.`);
+
+    return surveys.map((survey) => ({
+      ...survey,
+      questionAnswer: JSON.parse(survey.questionAnswer),
+    }));
+
   },
 
 };
