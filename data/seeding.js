@@ -110,35 +110,36 @@ async function insertUserHasBook() {
     INSERT INTO "user_has_book"
     (
       "book_id",
-      "user_id"
+      "user_id",
+      "note"
     )
     VALUES
     (
-      1, 2
+      1, 2, 1
     ),
     (
-      1, 3
+      1, 3, 1
     ),
     (
-      1, 1
+      1, 1, 1
     ),
     (
-      2, 3
+      2, 3, 1
     ),
     (
-      2, 1
+      2, 1, 1
     ),
     (
-      2, 2
+      2, 2, 1
     ),
     (
-      3, 1
+      3, 1, 1
     ),
     (
-      3, 2
+      3, 2, 1
     ),
     (
-      3, 3
+      3, 3, 1
     )
     RETURNING id
   `;

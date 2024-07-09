@@ -67,12 +67,14 @@ CREATE FUNCTION "insert_user_has_book"(json) RETURNS "user_has_book" AS $$
     "book_id",
     "user_id",
     "is_active",
-    "is_favorite"
+    "is_favorite",
+    "note"
   ) VALUES (
     ($1->>'book_id')::INT,
     ($1->>'user_id')::INT,
     COALESCE(($1->>'is_active')::BOOLEAN, TRUE),
-    COALESCE(($1->>'is_favorite')::BOOLEAN, FALSE)
+    COALESCE(($1->>'is_favorite')::BOOLEAN, FALSE),
+    ($1->>'note')::INT
   ) RETURNING *
 
 $$ LANGUAGE sql
@@ -127,6 +129,7 @@ CREATE FUNCTION "update_user_has_book"(json) RETURNS "user_has_book" AS $$
   UPDATE "user_has_book" SET
     "is_active" = COALESCE(($1->>'is_active')::BOOLEAN, "is_active"),
     "is_favorite" = COALESCE(($1->>'is_favorite')::BOOLEAN, "is_favorite"),
+    "note" = COALESCE(($1->>'note')::INT, "note"),
     "updated_at" = now()
   WHERE "book_id" = ($1->>'book_id')::INT AND "user_id" = ($1->>'user_id')::INT
   RETURNING *
