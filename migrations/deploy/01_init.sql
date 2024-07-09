@@ -43,4 +43,7 @@ CREATE TABLE "user_has_book" (
     "updated_at" TIMESTAMPTZ
 );
 
+ALTER TABLE "user_has_book"
+ADD CONSTRAINT user_has_book_unique UNIQUE ("user_id", "book_id");
+
 COMMIT;
