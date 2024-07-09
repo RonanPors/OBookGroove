@@ -22,9 +22,11 @@ export default {
 
   },
 
-  async favoriteBooks({ id }, _, { bookLoader }) {
+  async favoriteBooks({ id }, { limit, offset }, { bookLoader }) {
 
     const books = await userHasBookDatamapper.findAll({
+      limit,
+      offset,
       where: {
         userId: id,
         isFavorite: true,
