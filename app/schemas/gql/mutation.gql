@@ -13,4 +13,8 @@ type Mutation {
   # Ici, il faut l'id du survey car le user_id sera associé à plusieurs surveys éventuellement
   deleteSurvey(id: Int!): Survey
 
+  createComment(input: CommentInputCreate): Comment
+  updateComment(input: CommentInputUpdate): Comment
+  deleteComment(bookId: Int!, userId: Int!): Comment
+
 }

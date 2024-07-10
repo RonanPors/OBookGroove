@@ -177,6 +177,51 @@ async function insertSurveys() {
   return result.rows;
 }
 
+async function insertComments() {
+  await pool.query('TRUNCATE TABLE "comment" RESTART IDENTITY CASCADE');
+
+  const queryStr = `
+    INSERT INTO "comment"
+    (
+      "book_id",
+      "user_id",
+      "comment_text"
+    )
+    VALUES
+    (
+      1, 2, 'commentaire'
+    ),
+    (
+      1, 3, 'commentaire'
+    ),
+    (
+      1, 1, 'commentaire'
+    ),
+    (
+      2, 3, 'commentaire'
+    ),
+    (
+      2, 1, 'commentaire'
+    ),
+    (
+      2, 2, 'commentaire'
+    ),
+    (
+      3, 1, 'commentaire'
+    ),
+    (
+      3, 2, 'commentaire'
+    ),
+    (
+      3, 3, 'commentaire'
+    )
+    RETURNING id
+  `;
+
+  const result = await pool.query(queryStr);
+  return result.rows;
+}
+
 (async () => {
 
   /**
@@ -202,6 +247,12 @@ async function insertSurveys() {
     */
   const insertedSurveys = await insertSurveys();
   console.log(`${insertedSurveys.length} surveys inserted`);
+
+  /**
+    * Ajout des commentaires sur des livres en BDD
+    */
+  const insertedComments = await insertComments();
+  console.log(`${insertedComments.length} comments inserted`);
 
   pool.end();
 })();

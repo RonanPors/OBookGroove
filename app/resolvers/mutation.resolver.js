@@ -1,4 +1,4 @@
-import { surveyDatamapper, userDatamapper, userHasBookDatamapper } from '../datamappers/index.datamapper.js';
+import { surveyDatamapper, userDatamapper, userHasBookDatamapper, commentDatamapper } from '../datamappers/index.datamapper.js';
 import { unauthorizedError, notFoundError } from '../errors/gql.error.js';
 
 export default {
@@ -105,7 +105,7 @@ export default {
     return {
       ...updatedSurvey,
       questionAnswer: JSON.parse(updatedSurvey.questionAnswer),
-    };;
+    };
 
   },
 
@@ -124,6 +124,48 @@ export default {
       ...deletedSurvey,
       questionAnswer: JSON.parse(deletedSurvey.questionAnswer),
     };
+
+  },
+
+  async createComment(_, { input }, { user }) {
+
+    if (!user) throw unauthorizedError('Missing authentication.');
+
+    const createdComment = await commentDatamapper.create(input);
+
+    if (!createdComment)
+      throw notFoundError(`Erreur lors de la création du commentaire.`);
+
+    return createdComment;
+
+  },
+
+  async updateComment(_, { input }, { user }) {
+
+    if (!user) throw unauthorizedError('Missing authentication.');
+
+    const updatedComment = await commentDatamapper.update(input);
+
+    if (!updatedComment)
+      throw notFoundError(`Erreur lors de la mise à jour du commentaire.`);
+
+    return updatedComment;
+
+  },
+
+  async deleteComment(_, { bookId, userId }, { user }) {
+
+    if (!user) throw unauthorizedError('Missing authentication.');
+
+    const deletedComment = await commentDatamapper.delete({
+      bookId,
+      userId,
+    });
+
+    if (!deletedComment)
+      throw notFoundError(`Erreur lors de la suppresion du commentaire.`);
+
+    return deletedComment;
 
   },
 

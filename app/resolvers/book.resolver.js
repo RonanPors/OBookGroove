@@ -1,4 +1,5 @@
-import { userHasBookDatamapper } from '../datamappers/index.datamapper.js';
+import { unauthorizedError, notFoundError } from '../errors/gql.error.js';
+import { userHasBookDatamapper, commentDatamapper } from '../datamappers/index.datamapper.js';
 
 export default {
 
@@ -13,6 +14,29 @@ export default {
     );
 
     return newUsers;
+
+  },
+
+  async comments({ id }, { limit, offset }, { user }) {
+
+    if (!user) throw unauthorizedError('Missing authentication.');
+
+    const comments = await commentDatamapper.findAll({
+      limit,
+      offset,
+      where: {
+        bookId: id,
+      },
+      order: {
+        column: 'created_at',
+        direction: 'desc',
+      },
+    });
+
+    if (!comments)
+      throw notFoundError(`No current comments found.`);
+
+    return comments;
 
   },
 

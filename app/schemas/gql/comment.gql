@@ -1,0 +1,24 @@
+type Comment {
+
+  id: Int
+  bookId: Int
+  userId: Int
+  commentText: String
+
+}
+
+input CommentInputCreate {
+
+  bookId: Int!
+  userId: Int!
+  commentText: String
+
+}
+
+input CommentInputUpdate {
+
+  bookId: Int!
+  userId: Int!
+  commentText: String
+
+}

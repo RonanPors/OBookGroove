@@ -9,7 +9,7 @@ const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
  * @returns - JWT valide et signé
  */
 export const createAccessToken = (claims) => jwt.sign({
-  claims,
+  ...claims,
 }, ACCESS_TOKEN_SECRET, {
   algorithm: 'HS256',
   expiresIn: '15m',
@@ -21,7 +21,7 @@ export const createAccessToken = (claims) => jwt.sign({
  * @returns - JWT valide et signé
  */
 export const createRefreshToken = (claims) => jwt.sign({
-  claims,
+  ...claims,
 }, REFRESH_TOKEN_SECRET, {
   algorithm: 'HS256',
   expiresIn: '60m',

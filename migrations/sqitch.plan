@@ -5,3 +5,5 @@
 02_crud_functions 2024-06-28T14:06:41Z Etudiant O'clock <student@teleporter> # add API SQL (CRUD)
 03_survey_table 2024-07-09T18:25:39Z Etudiant O'clock <student@teleporter> # add survey table in bdd
 04_crud_functions_survey_table 2024-07-09T18:45:29Z Etudiant O'clock <student@teleporter> # add crud functions for survey table in bdd
+05_comment_table 2024-07-10T16:55:11Z Etudiant O'clock <student@teleporter> # add comment table in bdd
+06_crud_functions_comment_table 2024-07-10T17:02:32Z Etudiant O'clock <student@teleporter> # add crud functions for comment table in bdd

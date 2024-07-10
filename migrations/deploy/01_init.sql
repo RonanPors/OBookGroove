@@ -46,4 +46,8 @@ CREATE TABLE "user_has_book" (
 ALTER TABLE "user_has_book"
 ADD CONSTRAINT user_has_book_unique UNIQUE ("user_id", "book_id");
 
+-- Créer un index sur le champ "isbn" de la table "book" afin d'accelerer la récupération
+-- hash: Très efficace pour les égalités "="
+CREATE INDEX "book_isbn_idx" ON "book" USING hash ("isbn");
+
 COMMIT;
