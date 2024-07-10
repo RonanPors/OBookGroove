@@ -5,6 +5,7 @@ type UserHasBook {
   userId: Int
   isActive: Boolean
   isFavorite: Boolean
+  note: Int
 
 }
 
@@ -16,5 +17,16 @@ input UserHasBookInputCreate {
   userId: Int!
   isActive: Boolean
   isFavorite: Boolean
+  note: Int
+
+}
+
+input UserHasBookInputUpdate {
+
+  bookId: Int!
+  userId: Int!
+  isActive: Boolean
+  isFavorite: Boolean
+  note: Int
 
 }

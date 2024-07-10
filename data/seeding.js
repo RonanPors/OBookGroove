@@ -110,35 +110,65 @@ async function insertUserHasBook() {
     INSERT INTO "user_has_book"
     (
       "book_id",
-      "user_id"
+      "user_id",
+      "note"
     )
     VALUES
     (
-      1, 2
+      1, 2, 1
     ),
     (
-      1, 3
+      1, 3, 1
     ),
     (
-      1, 1
+      1, 1, 1
     ),
     (
-      2, 3
+      2, 3, 1
     ),
     (
-      2, 1
+      2, 1, 1
     ),
     (
-      2, 2
+      2, 2, 1
     ),
     (
-      3, 1
+      3, 1, 1
     ),
     (
-      3, 2
+      3, 2, 1
     ),
     (
-      3, 3
+      3, 3, 1
+    )
+    RETURNING id
+  `;
+
+  const result = await pool.query(queryStr);
+  return result.rows;
+}
+
+async function insertSurveys() {
+  await pool.query('TRUNCATE TABLE "survey" RESTART IDENTITY CASCADE');
+
+  const queryStr = `
+    INSERT INTO "survey"
+    (
+        "user_id",
+        "question_answer"
+    )
+    VALUES
+    (
+        '1',
+        '{"key1": "value1", "key2": "value2"}'
+    ),
+    (
+        '2',
+        '{"key1": "value1", "key2": "value2"}'
+    ),
+    (
+        '3',
+        '{"key1": "value1", "key2": "value2"}'
     )
     RETURNING id
   `;
@@ -166,6 +196,12 @@ async function insertUserHasBook() {
     */
   const insertedUserHasRole = await insertUserHasBook();
   console.log(`${insertedUserHasRole.length} users has books inserted`);
+
+  /**
+    * Ajout des questions/réponses en BDD
+    */
+  const insertedSurveys = await insertSurveys();
+  console.log(`${insertedSurveys.length} surveys inserted`);
 
   pool.end();
 })();

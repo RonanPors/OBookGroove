@@ -38,8 +38,12 @@ CREATE TABLE "user_has_book" (
     "user_id" INT NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
     "is_active" BOOLEAN NOT NULL DEFAULT true,
     "is_favorite" BOOLEAN NOT NULL DEFAULT false,
+    "note" INT,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
     "updated_at" TIMESTAMPTZ
 );
+
+ALTER TABLE "user_has_book"
+ADD CONSTRAINT user_has_book_unique UNIQUE ("user_id", "book_id");
 
 COMMIT;
