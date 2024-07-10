@@ -23,4 +23,9 @@ CREATE TABLE "collection_has_book" (
 ALTER TABLE "collection_has_book"
 ADD CONSTRAINT collection_has_book_unique UNIQUE ("collection_id", "book_id");
 
+-- cette contrainte sert à ce qu'un même utilisateur n'est pas deux collections du même nom
+-- par contre ça ne respecte pas la casse, donc 'action' et 'Action' fonctionnent
+ALTER TABLE "collection"
+ADD CONSTRAINT collection_unique_name UNIQUE ("user_id", "collection_name");
+
 COMMIT;

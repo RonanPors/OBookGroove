@@ -1,0 +1,23 @@
+type CollectionHasBook {
+
+  id: Int
+  collectionId: Int
+  bookId: Int
+
+}
+
+# Attention, un enregistrement dans la table d'association se supprime tout seul
+# A partir du moment ou l'une des deux clés de référence est supprimée (ON DELETE CASCADE)
+input CollectionHasBookInputCreate {
+
+  collectionId: Int!
+  bookId: Int!
+
+}
+
+input CollectionHasBookInputUpdate {
+
+  collectionId: Int!
+  bookId: Int!
+
+}

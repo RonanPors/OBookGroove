@@ -55,7 +55,7 @@ CREATE FUNCTION "update_collection_has_book"(json) RETURNS "collection_has_book"
     "collection_id" = COALESCE(($1->>'collection_id')::INT, "collection_id"),
     "book_id" = COALESCE(($1->>'book_id')::INT, "book_id"),
     "updated_at" = now()
-  WHERE "id" = ($1->>'id')::INT
+  WHERE "collection_id" = ($1->>'collection_id')::INT AND "book_id" = ($1->>'book_id')::INT
   RETURNING *
 
 $$ LANGUAGE sql
