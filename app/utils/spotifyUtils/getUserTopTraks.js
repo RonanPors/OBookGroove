@@ -2,15 +2,14 @@
 
 import ErrorApi from "../../errors/api.error.js";
 
-export async function getUserTopTraks(cookies) {
+export async function getUserTopTraks(accessTokenSpotify) {
 
   let datasTable = [];
-  const accessToken = cookies['access_token_spotify'];
   const spotifyUserTrackUrl = process.env.SPOTIFY_USER_TRACKS;
 
   const response = await fetch(spotifyUserTrackUrl, {
     headers: {
-      Authorization: 'Bearer ' + accessToken,
+      'Authorization': 'Bearer ' + accessTokenSpotify,
     },
   });
 
