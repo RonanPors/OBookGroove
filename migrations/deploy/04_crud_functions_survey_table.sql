@@ -23,6 +23,7 @@ VOLATILE STRICT;
 CREATE FUNCTION "update_survey"(json) RETURNS "survey" AS $$
 
   UPDATE "survey" SET
+    "user_id" = COALESCE(($1->>'user_id')::INT, "user_id"),
     "question_answer" = COALESCE($1->>'question_answer', "question_answer"),
     "updated_at" = now()
   WHERE "id" = ($1->>'id')::INT

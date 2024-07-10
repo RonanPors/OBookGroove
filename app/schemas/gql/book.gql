@@ -13,6 +13,7 @@ type Book {
   numberOfPages: Int
 
   users: [User]!
+  comments(limit: Int, offset: Int): [Comment]!
 
 }
 
