@@ -222,6 +222,76 @@ async function insertComments() {
   return result.rows;
 }
 
+async function insertCollections() {
+  await pool.query('TRUNCATE TABLE "collection" RESTART IDENTITY CASCADE');
+
+  const queryStr = `
+    INSERT INTO "collection"
+    (
+      "user_id",
+      "collection_name"
+    )
+    VALUES
+    (
+      1, 'action'
+    ),
+    (
+      2, 'roman'
+    ),
+    (
+      3, 'aventure'
+    )
+    RETURNING id
+  `;
+
+  const result = await pool.query(queryStr);
+  return result.rows;
+}
+
+async function insertCollectionHasBook() {
+  await pool.query('TRUNCATE TABLE "collection_has_book" RESTART IDENTITY CASCADE');
+
+  const queryStr = `
+    INSERT INTO "collection_has_book"
+    (
+      "collection_id",
+      "book_id"
+    )
+    VALUES
+    (
+      1, 1
+    ),
+    (
+      1, 2
+    ),
+    (
+      1, 3
+    ),
+    (
+      2, 3
+    ),
+    (
+      2, 1
+    ),
+    (
+      2, 2
+    ),
+    (
+      3, 1
+    ),
+    (
+      3, 2
+    ),
+    (
+      3, 3
+    )
+    RETURNING id
+  `;
+
+  const result = await pool.query(queryStr);
+  return result.rows;
+}
+
 (async () => {
 
   /**
@@ -253,6 +323,18 @@ async function insertComments() {
     */
   const insertedComments = await insertComments();
   console.log(`${insertedComments.length} comments inserted`);
+
+  /**
+    * Ajout des collections associées à des utilisateurs en BDD
+    */
+  const insertedCollections = await insertCollections();
+  console.log(`${insertedCollections.length} collections inserted`);
+
+  /**
+    * Ajout de livres associés à des collections en BDD
+    */
+  const insertedCollectionHasBook = await insertCollectionHasBook();
+  console.log(`${insertedCollectionHasBook.length} CollectionHasBook inserted`);
 
   pool.end();
 })();

@@ -1,4 +1,11 @@
-import { surveyDatamapper, userDatamapper, userHasBookDatamapper, commentDatamapper } from '../datamappers/index.datamapper.js';
+import {
+  surveyDatamapper,
+  userDatamapper,
+  userHasBookDatamapper,
+  commentDatamapper,
+  collectionDatamapper,
+  collectionHasBookDatamapper,
+} from '../datamappers/index.datamapper.js';
 import { unauthorizedError, notFoundError } from '../errors/gql.error.js';
 
 export default {
@@ -166,6 +173,89 @@ export default {
       throw notFoundError(`Erreur lors de la suppresion du commentaire.`);
 
     return deletedComment;
+
+  },
+
+  async createCollection(_, { input }, { user }) {
+
+    if (!user) throw unauthorizedError('Missing authentication.');
+
+    const createdCollection = await collectionDatamapper.create(input);
+
+    if (!createdCollection)
+      throw notFoundError(`Erreur lors de la création de la collection.`);
+
+    return createdCollection;
+
+  },
+
+  async updateCollection(_, { input }, { user }) {
+
+    if (!user) throw unauthorizedError('Missing authentication.');
+
+    const updatedCollection = await collectionDatamapper.update(input);
+
+    if (!updatedCollection)
+      throw notFoundError(`Erreur lors de la mise à jour de la collection.`);
+
+    return updatedCollection;
+
+  },
+
+  async deleteCollection(_, { id }, { user }) {
+
+    if (!user) throw unauthorizedError('Missing authentication.');
+
+    const deletedCollection = await collectionDatamapper.delete({
+      id,
+    });
+
+    if (!deletedCollection)
+      throw notFoundError(`Erreur lors de la suppresion de la collection.`);
+
+    return deletedCollection;
+
+  },
+
+  async createCollectionHasBook(_, { input }, { user }) {
+
+    if (!user) throw unauthorizedError('Missing authentication.');
+
+    const createdCollectionHasBook = await collectionHasBookDatamapper.create(input);
+
+    if (!createdCollectionHasBook)
+      throw notFoundError(`Erreur lors de la création de l'association entre la collection et le livre.`);
+
+    return createdCollectionHasBook;
+
+  },
+
+  async updateCollectionHasBook(_, { input }, { user }) {
+
+    if (!user) throw unauthorizedError('Missing authentication.');
+
+    const updatedCollectionHasBook = await collectionHasBookDatamapper.update(input);
+
+    if (!updatedCollectionHasBook)
+      throw notFoundError(`Erreur lors de la mise à jour de l'association entre la collection et le livre.`);
+
+    return updatedCollectionHasBook;
+
+  },
+
+  async deleteCollectionHasBook(_, { collectionId, bookId }, { user }) {
+
+    if (!user) throw unauthorizedError('Missing authentication.');
+
+    const deletedCollectionHasBook = await collectionHasBookDatamapper.delete({
+      collectionId,
+      bookId,
+    });
+
+    if (!deletedCollectionHasBook)
+      throw notFoundError(`Erreur lors de la suppresion de l'association entre la collection et le livre.`);
+
+    return deletedCollectionHasBook;
 
   },
 
