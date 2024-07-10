@@ -1,30 +1,31 @@
 import { getUserTopTraks } from "./spotifyUtils/getUserTopTraks.js";
 import { getTrackFeatures } from "./spotifyUtils/getFeatureTraks.js";
 import { getGenreOfTrack } from "./getGenreOfTrack.js";
+import { updateActiveBooks } from "./updateActiveBook.js";
 import { userHasBookDatamapper } from "../datamappers/index.datamapper.js";
+import ErrorApi from "../errors/api.error.js";
 //Services de suggestion de livres
 
 export default {
 
-  // {
-  //   access_token_spotify: accessTokenSpotify,
-  //   claims: { sub: userId },
-  // }
-
-  async init(accessTokenSpotify) {
+  async init(accessTokenSpotify, userId) {
 
     // Vérifier si il existe des livres actifs.
-    // const books = await userHasBookDatamapper.findAll({
-    //   where: {
-    //     userId,
-    //     isActive: true,
-    //   },
-    // });
+    const books = await userHasBookDatamapper.findAll({
+      where: {
+        userId,
+        isActive: true,
+      },
+    });
 
-    //Si il y a des livres actifs, on met à jour les livres actifs par rapport au date de création.
-    //Utils: on recupère les livres actifs
-    //Pour chaque livres, on compare la date de création à la date actuelle.
-    //Si la date est antérieur à 7 jours par rapport à now(), on passe le livres en actif: false.
+    if (books.length <= 0)
+      throw new ErrorApi('NO_ACTIVE_BOOKS_FOUND', 'Aucun livre actif trouvé pour l\'utilisateur.', { status: 404 });
+
+    //On met à jour les livres actifs par rapport au date de création.
+    updateActiveBooks(books);
+    //*Utils: on recupère les livres actifs
+    //*Pour chaque livres, on compare la date de création à la date actuelle.
+    //*Si la date est antérieur à 7 jours par rapport à now(), on passe le livres en actif: false.
 
 
     //Vérifier si il y à 200 livres actifs.

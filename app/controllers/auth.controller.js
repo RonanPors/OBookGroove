@@ -116,12 +116,10 @@ export default {
     res.cookie('accessTokenObg', response.accessToken, {
       httpOnly: true,
       secure: false,
-      sameSite: 'Strict',
     });
     res.cookie('refreshTokenObg', response.refreshToken, {
       httpOnly: true,
       secure: false,
-      sameSite: 'Strict',
     });
 
     // Retourner les deux tokens ici

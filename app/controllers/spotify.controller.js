@@ -84,8 +84,8 @@ export default {
     res.cookie('refresh_token_spotify', data.refresh_token, { httpOnly: true, secure: false }); //! A passer en secure true en production
 
     // Lancement du service qui retourne 20 livres de l'API GoogleBooks ou de notre BDD.
-    console.log('auth callback:', req.auth);
-    const suggestBooks = await booksGenerator.init(data.access_token);
+    console.log('req.auth:', req.auth);
+    const suggestBooks = await booksGenerator.init(data.access_token, req.auth.claims.sub);
 
     if (!suggestBooks)
       throw new ErrorApi('FAILED_BOOKS_SUGGEST', 'Échec de récupération des livres de suggestion.', { status: 500 });
