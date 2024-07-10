@@ -1,10 +1,11 @@
 import { getUserTopTraks } from "./spotifyUtils/getUserTopTraks.js";
 import { getTrackFeatures } from "./spotifyUtils/getFeatureTraks.js";
 import { getGenreOfTrack } from "./getGenreOfTrack.js";
+import { getBooksGenre } from "./googleBooksUtils/getBooksGenre.js";
 import { updateActiveBooks } from "./updateActiveBook.js";
-import { userHasBookDatamapper } from "../datamappers/index.datamapper.js";
+import { userHasBookDatamapper, bookDatamapper } from "../datamappers/index.datamapper.js";
 import ErrorApi from "../errors/api.error.js";
-//Services de suggestion de livres
+//Services de suggestion de livres.
 
 export default {
 
@@ -21,35 +22,63 @@ export default {
     if (books.length <= 0)
       throw new ErrorApi('NO_ACTIVE_BOOKS_FOUND', 'Aucun livre actif trouvé pour l\'utilisateur.', { status: 404 });
 
-    //On met à jour les livres actifs par rapport au date de création.
-    updateActiveBooks(books);
-    //*Utils: on recupère les livres actifs
-    //*Pour chaque livres, on compare la date de création à la date actuelle.
-    //*Si la date est antérieur à 7 jours par rapport à now(), on passe le livres en actif: false.
+    //On met à jour les livres actifs qui sont inférieurs ou égaux à la date actuelle -7 jours.
+    const updateBooksConfirm = updateActiveBooks(books);
 
+    if (!updateBooksConfirm)
+      throw new ErrorApi('FAILED_UPDATE_ACTIVE_BOOKS', 'Échec de mise à jour des livres actifs.', { status: 500 });
 
-    //Vérifier si il y à 200 livres actifs.
+    //Récupération des livres actifs mis à jour en BDD.
+    const newDataBooksUser = await userHasBookDatamapper.findAll({
+      where: {
+        userId,
+        isActive: true,
+      },
+    });
 
     //Si il y a 200 livres actifs, on récupère les 20 dernier livres actifs et on les retourne au front avec un message pour informer l'utilisateur qu'il a atteind sa limite de requêtes autorisées.
+    if (newDataBooksUser.length >= 200) {
+      //!Attention on ne récupère que les id des livres de l'utilisateur dans currentIdBooksUser.
+      const currentIdBooksUser = await userHasBookDatamapper.findAll({
+        limit: 20,
+        where: {
+          userId: id,
+          isActive: true,
+        },
+        order: {
+          column: 'created_at',
+          direction: 'desc',
+        },
+      });
 
-    // Tableau contenant les 10 Tops musiques de l'utilisateur.
+      //On récupère les livres de la table book.
+      const currentBooks = [];
+      currentIdBooksUser.maps(async book => {
+        currentBooks.push(await bookDatamapper.findByPk(book.bookId) );
+      });
+
+      // Retourner les 20 livres de l'utilisateur.
+      return currentBooks;
+    };
+
+    // Récupération des tops musique de l'utilisateur à l'API Spotify.
     const trackIds = await getUserTopTraks(accessTokenSpotify);
 
     if (!trackIds)
       throw new ErrorApi('NO_TOP_TRACKS_FOUND', 'Aucun Top Track trouvé pour l\'utilisateur.', { status: 404 });
 
-    return trackIds;
-    // Tableau contenant les features des musiques de l'utilisateur.
-    const resultGlobalFeatures = await Promise.all(
+    // Maintenant que l'on possède l'id des musiques de l'utilisateur, on récupère leurs signatures musicales à l'API Spotify.
+    const globalSignTracks = await Promise.all(
       trackIds.map(async track =>
         await getTrackFeatures(track.id, accessTokenSpotify)),
     );
-    //Boucler sur le résultat des features pour assigner un genre de livre.
-    const genresBooks = resultGlobalFeatures.map( features =>
-      getGenreOfTrack(features, genreTracks),
+    //Récupération des genres des signatures musicales.
+    const genresBooks = globalSignTracks.map( signTrack =>
+      getGenreOfTrack(signTrack, genreTracks),
     );
 
     // Récupérer 100 livres des genres retournées depuis l'API Google Books
+    const suggestBooks = await getBooksGenre(genresBooks);
 
     // Boucler sur les 100 livres et vérifier ceux qui ont déjà un isbn en BDD
 

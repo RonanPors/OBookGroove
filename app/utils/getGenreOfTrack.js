@@ -1,6 +1,4 @@
-// Fonction de récupération des features d'une musique de notre utilisateur.
-
-import ErrorApi from "../errors/api.error.js";
+// Algorythme de classification de genres des signatures musicales.
 
 export async function getGenreOfTrack(features, genreTracks) {
   let bestMatch = null;
