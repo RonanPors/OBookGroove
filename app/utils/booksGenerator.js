@@ -11,7 +11,7 @@ export default {
   //   claims: { sub: userId },
   // }
 
-  async init(objet) {
+  async init(accessTokenSpotify) {
 
     // Vérifier si il existe des livres actifs.
     // const books = await userHasBookDatamapper.findAll({
@@ -20,7 +20,7 @@ export default {
     //     isActive: true,
     //   },
     // });
-    return true;
+
     //Si il y a des livres actifs, on met à jour les livres actifs par rapport au date de création.
     //Utils: on recupère les livres actifs
     //Pour chaque livres, on compare la date de création à la date actuelle.
@@ -37,6 +37,7 @@ export default {
     if (!trackIds)
       throw new ErrorApi('NO_TOP_TRACKS_FOUND', 'Aucun Top Track trouvé pour l\'utilisateur.', { status: 404 });
 
+    return trackIds;
     // Tableau contenant les features des musiques de l'utilisateur.
     const resultGlobalFeatures = await Promise.all(
       trackIds.map(async track =>
