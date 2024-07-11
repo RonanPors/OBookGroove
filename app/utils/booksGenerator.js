@@ -1,10 +1,11 @@
 import { getUserTopTraks } from "./spotifyUtils/getUserTopTraks.js";
-import { getTrackFeatures } from "./spotifyUtils/getFeatureTraks.js";
-import { getGenreOfTrack } from "./getGenreOfTrack.js";
-import { getBooksGenre } from "./googleBooksUtils/getBooksGenre.js";
+// import { getTrackFeatures } from "./spotifyUtils/getFeatureTraks.js";
+// import { getGenreOfTrack } from "./getGenreOfTrack.js";
+import { getTitleBooks } from "./geminiUtils/getTitleBooks.js";
 import { updateActiveBooks } from "./updateActiveBook.js";
 import { userHasBookDatamapper, bookDatamapper } from "../datamappers/index.datamapper.js";
 import ErrorApi from "../errors/api.error.js";
+
 //Services de suggestion de livres.
 
 export default {
@@ -23,7 +24,7 @@ export default {
       throw new ErrorApi('NO_ACTIVE_BOOKS_FOUND', 'Aucun livre actif trouvé pour l\'utilisateur.', { status: 404 });
 
     //On met à jour les livres actifs qui sont inférieurs ou égaux à la date actuelle -7 jours.
-    const updateBooksConfirm = updateActiveBooks(books);
+    const updateBooksConfirm = updateActiveBooks(books, userId);
 
     if (!updateBooksConfirm)
       throw new ErrorApi('FAILED_UPDATE_ACTIVE_BOOKS', 'Échec de mise à jour des livres actifs.', { status: 500 });
@@ -40,9 +41,9 @@ export default {
     if (newDataBooksUser.length >= 200) {
       //!Attention on ne récupère que les id des livres de l'utilisateur dans currentIdBooksUser.
       const currentIdBooksUser = await userHasBookDatamapper.findAll({
-        limit: 20,
+        limit: 10,
         where: {
-          userId: id,
+          userId,
           isActive: true,
         },
         order: {
@@ -54,7 +55,7 @@ export default {
       //On récupère les livres de la table book.
       const currentBooks = [];
       currentIdBooksUser.maps(async book => {
-        currentBooks.push(await bookDatamapper.findByPk(book.bookId) );
+        currentBooks.push(await bookDatamapper.findByPk(book.bookId));
       });
 
       // Retourner les 20 livres de l'utilisateur.
@@ -65,27 +66,39 @@ export default {
     const trackIds = await getUserTopTraks(accessTokenSpotify);
 
     if (!trackIds)
-      throw new ErrorApi('NO_TOP_TRACKS_FOUND', 'Aucun Top Track trouvé pour l\'utilisateur.', { status: 404 });
+      throw new ErrorApi('NO_TOP_TRACKS_FOUND', 'Aucune musique trouvée pour l\'utilisateur.', { status: 404 });
 
+    //!A remplacer par GEMINI à ce moment :
     // Maintenant que l'on possède l'id des musiques de l'utilisateur, on récupère leurs signatures musicales à l'API Spotify.
-    const globalSignTracks = await Promise.all(
+    /*     const globalSignTracks = await Promise.all(
       trackIds.map(async track =>
         await getTrackFeatures(track.id, accessTokenSpotify)),
     );
     //Récupération des genres des signatures musicales.
     const genresBooks = globalSignTracks.map( signTrack =>
       getGenreOfTrack(signTrack, genreTracks),
-    );
+    ); */
+    //!Fin de remplacement.
 
-    // Récupérer 100 livres des genres retournées depuis l'API Google Books
-    const suggestBooks = await getBooksGenre(genresBooks);
+    // Récupérer 100 livres des titre retournées par gemini depuis l'API Google Books
+    //! Utiliser plutôt les titres et les auteurs fournis par Gemini
+    const suggestBooks = await getTitleBooks(geminiBooksSuggest);
 
     // Boucler sur les 100 livres et vérifier ceux qui ont déjà un isbn en BDD
+    // Requête pour récupérer dans un tableau les ISBN avec l'id du book déjà présent dans la table book
+    const booksAlreadyPresent = await Promise.all(
+      suggestBooks.map(({ isbn }) => bookDatamapper.findByIsbn(isbn)),
+    );
 
-    //! Une requête pour récupérer dans une tableau les ISBN avec l'id du book déjà présent dans la table book
-    // => A chaque fois que nous trouvons un ISBN déjà en BDD dans la table book (créer un index SQL pour optimiser la rechercher)
-    //! Une requête pour la vérification
-    // => vérifier l'id du book trouvé dans la table d'association si ce livre est lié à l'utilisateur actuellement ciblé
+    // Vérifier l'id du book trouvé dans la table d'association si ce livre est lié à l'utilisateur actuellement ciblé
+    const userHasBookAlreadyPresent = await Promise.all(
+      booksAlreadyPresent.map(({ id: bookId }) => userHasBookDatamapper.findAll({
+        where: {
+          bookId,
+          userId,
+        },
+      })),
+    );
 
     // => Si il existe une association entre le livre et l'utilisateur actuellement ciblé, vérifier le is_active et le is_favorite, si un des deux est true, supprimer ce livre des 100 livres
     // => Sinon, garder le livres dans les 100 livres

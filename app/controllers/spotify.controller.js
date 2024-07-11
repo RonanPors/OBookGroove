@@ -8,7 +8,7 @@ const stateKey = generateRandomString(64);
 // On renseigne les informations fournies par spotify pour pouvoir s'identifier auprès de l'API Tiers.
 const spotifyClientId = process.env.SPOTIFY_APP_CLIENT_ID;
 const spotifyClientSecret = process.env.SPOTIFY_APP_CLIENT_SECRET;
-const redirect_uri = process.env.SPOTIFY_REDIRECT_URI;
+const redirect_uri = process.env.BASE_URL + process.env.SPOTIFY_REDIRECT_URI;
 
 export default {
 
@@ -85,7 +85,7 @@ export default {
 
     // Lancement du service qui retourne 20 livres de l'API GoogleBooks ou de notre BDD.
     console.log('req.auth:', req.auth);
-    const suggestBooks = await booksGenerator.init(data.access_token, req.auth.claims.sub);
+    const suggestBooks = await booksGenerator.init(data.access_token, req.auth.sub);
 
     if (!suggestBooks)
       throw new ErrorApi('FAILED_BOOKS_SUGGEST', 'Échec de récupération des livres de suggestion.', { status: 500 });
