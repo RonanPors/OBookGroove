@@ -1,6 +1,4 @@
 import { getUserTopTraks } from "./spotifyUtils/getUserTopTraks.js";
-// import { getTrackFeatures } from "./spotifyUtils/getFeatureTraks.js";
-// import { getGenreOfTrack } from "./getGenreOfTrack.js";
 import { getTitleBooks } from "./geminiUtils/getTitleBooks.js";
 import { updateActiveBooks } from "./updateActiveBook.js";
 import { userHasBookDatamapper, bookDatamapper } from "../datamappers/index.datamapper.js";
@@ -29,6 +27,14 @@ export default {
     if (!updateBooksConfirm)
       throw new ErrorApi('FAILED_UPDATE_ACTIVE_BOOKS', 'Échec de mise à jour des livres actifs.', { status: 500 });
 
+    // Supprimer toutes les associations de la BDD qui sont en is_active false ET is_favorite false
+    await userHasBookDatamapper.delete({
+      where: {
+        isActive: false,
+        isFavorite: false,
+      },
+    });
+
     //Récupération des livres actifs mis à jour en BDD.
     const newDataBooksUser = await userHasBookDatamapper.findAll({
       where: {
@@ -38,7 +44,7 @@ export default {
     });
 
     //Si il y a 200 livres actifs, on récupère les 20 dernier livres actifs et on les retourne au front avec un message pour informer l'utilisateur qu'il a atteind sa limite de requêtes autorisées.
-    if (newDataBooksUser.length >= 200) {
+    if (newDataBooksUser.length >= 100) {
       //!Attention on ne récupère que les id des livres de l'utilisateur dans currentIdBooksUser.
       const currentIdBooksUser = await userHasBookDatamapper.findAll({
         limit: 10,
@@ -68,44 +74,69 @@ export default {
     if (!trackIds)
       throw new ErrorApi('NO_TOP_TRACKS_FOUND', 'Aucune musique trouvée pour l\'utilisateur.', { status: 404 });
 
-    //!A remplacer par GEMINI à ce moment :
-    // Maintenant que l'on possède l'id des musiques de l'utilisateur, on récupère leurs signatures musicales à l'API Spotify.
-    /*     const globalSignTracks = await Promise.all(
-      trackIds.map(async track =>
-        await getTrackFeatures(track.id, accessTokenSpotify)),
-    );
-    //Récupération des genres des signatures musicales.
-    const genresBooks = globalSignTracks.map( signTrack =>
-      getGenreOfTrack(signTrack, genreTracks),
-    ); */
-    //!Fin de remplacement.
+    //!Utilisation de Gemini pour récupérer des titres et auteurs de livres sur la base des musiques:
 
-    // Récupérer 100 livres des titre retournées par gemini depuis l'API Google Books
+
+    // Récupérer 40 livres des titre retournées par gemini depuis l'API Google Books
     //! Utiliser plutôt les titres et les auteurs fournis par Gemini
     const suggestBooks = await getTitleBooks(geminiBooksSuggest);
 
-    // Boucler sur les 100 livres et vérifier ceux qui ont déjà un isbn en BDD
+    // Boucler sur les 40 livres et vérifier ceux qui ont déjà un isbn en BDD
     // Requête pour récupérer dans un tableau les ISBN avec l'id du book déjà présent dans la table book
     const booksAlreadyPresent = await Promise.all(
       suggestBooks.map(({ isbn }) => bookDatamapper.findByIsbn(isbn)),
     );
 
-    // Vérifier l'id du book trouvé dans la table d'association si ce livre est lié à l'utilisateur actuellement ciblé
-    const userHasBookAlreadyPresent = await Promise.all(
+    // Vérifier l'id des livres trouvés dans la table d'association si ces livres sont lié à l'utilisateur actuellement ciblé
+    // Vérifier seulement si le is_active ET/OU is_favorite true
+    const userHasBookAlreadyPresentTrue = await Promise.all(
       booksAlreadyPresent.map(({ id: bookId }) => userHasBookDatamapper.findAll({
         where: {
           bookId,
           userId,
+          isActive: true,
+        },
+        orWhere: {
+          bookId,
+          userId,
+          isFavorite: true,
         },
       })),
     );
 
-    // => Si il existe une association entre le livre et l'utilisateur actuellement ciblé, vérifier le is_active et le is_favorite, si un des deux est true, supprimer ce livre des 100 livres
-    // => Sinon, garder le livres dans les 100 livres
+    // => S'il existe des associations entre les livres et l'utilisateur actuellement ciblé, supprimer ces livre des 40 livres
+    const newSuggestBooks = userHasBookAlreadyPresentTrue.map((association) =>
+      suggestBooks.filter((book) => book.isbn !== association.isbn),
+    );
 
-    // On en choisi 20 Random.
+    // => Vérifier qu'il y ait au moins 10 livres
+    if (newSuggestBooks.length < 10)
+      throw new ErrorApi('NO_TOP_TRACKS_FOUND', 'Les suggestions sont inférieur à 10 livres.', { status: 404 });
 
-    // Pour chacun des 20 livres random :
+    // On en choisi 10 Random.
+    //! A refaire au propre plus tard avec une fonction utils
+    const randomSuggestBooks = [];
+    for (let i = 0; randomSuggestBooks.length !== 10; i++) {
+
+      const randoms = [];
+
+      // 0 à (length - 1)
+      const random = Math.floor(Math.random() * newSuggestBooks.length);
+
+      // Vérifier que le nombre aléatoire ne soit pas déjà pris grâce au tableau randoms[]
+      if (!randoms.includes(random)) {
+
+        // Si le nombre aléatoire est bien nouveau, le mettre dans le tableau randoms[]
+        randoms.push(random);
+
+        // Mettre le suggestBook dans le tableau final des suggestions
+        randomSuggestBooks.push(newSuggestBooks[random]);
+
+      }
+
+    }
+
+    // Pour chacun des 10 livres random :
     // On vérifie dans la table book si le livre existe via son ISBN.
     // Si le livre n'existe pas, on l'ajoute à la table book et on récupère son ID.
     // Si il existe on récupère l'id Book.
@@ -113,7 +144,49 @@ export default {
     // Si le livre est associé, et que active, favorite sont à 0 on supprime la ligne.
     // On enregistre la nouvelle association.
 
-    // Retourner les 20 livres au front.
-    return trackIds;
+    //! A optimiser plus tard avec un whereIn()
+    const finalSuggestBooks = await Promise.all(
+
+      randomSuggestBooks.map(async (suggest) => {
+
+        let book = await bookDatamapper.findByIsbn(suggest.isbn);
+
+        // SI le livre n'est pas trouvé en BDD
+        // => Créer le livre en BDD
+        if (!book) {
+
+          book = await bookDatamapper.create({
+            isbn: suggest.isbn,
+            title: suggest.title,
+            author: suggest.author,
+            resume: suggest.resume,
+            genre: suggest.genre, // tableau
+            cover: suggest.cover,
+            year: suggest.year,
+            numberOfPages: suggest.numberOfPages,
+          });
+
+        }
+
+        // Sinon, SI le livre a été trouvé en BDD
+        // => Passer simplement à la création de l'association
+
+        // Créer l'association entre le livre et l'utilisateur
+        await userHasBookDatamapper.create({
+          bookId: book.id,
+          userId,
+          isActive: true,
+          isFavorite: false,
+        });
+
+        // Retourner le livre bien formaté
+        return book;
+
+      }),
+
+    );
+
+    // Retourner les 10 livres au front.
+    return finalSuggestBooks;
   },
 };
