@@ -1,5 +1,4 @@
 // Algorythme de classification de genres des signatures musicales.
-
 import ErrorApi from "../../errors/api.error.js";
 
 export async function getGoogleBooks(books) {
@@ -7,40 +6,36 @@ export async function getGoogleBooks(books) {
   const API_KEY = process.env.GOOGLEBOOK_API_KEY;
 
   const suggestBooks = await Promise.all(
-    books.map(async ({Titre, Auteur}, i) => {
+    books.map(async ({titre, auteur}) => {
 
-      const url = `https://www.googleapis.com/books/v1/volumes?q=intitle:"${Titre}"+inauthor:"${Auteur}"&printType=books&maxResults=1&projection=full&langRestrict=fr&key=${API_KEY}`;
+      const url = `https://www.googleapis.com/books/v1/volumes?q=intitle:"${titre}"+inauthor:"${auteur}"&printType=books&maxResults=1&projection=full&langRestrict=fr&key=${API_KEY}`;
       const response = await fetch(url);
 
       if (!response.ok)
         throw new ErrorApi('GOOGLE_BOOKS_API_ERROR', 'Erreur lors de la récupération des livres via Google Books API', { status: response.status });
 
-      const { items: [ item ] } = await response.json();
+      const data = await response.json();
 
-      console.log('data fetch:', JSON.stringify(item));
+      if (!data.items || data.totalItems === 0)
+        return null;
 
-      return item;
+      const { items: [ { id, volumeInfo } ] } = data;
 
-      // const { items: [ item ] } = await response.json();
-
-      // console.log(item);
-
-      // return {
-      //   isbn: item?.id,
-      //   title: item?.volumeInfo?.title,
-      //   author: item?.volumeInfo?.authors[0],
-      //   resume: item?.volumeInfo?.description,
-      //   genre: item?.volumeInfo?.categories[0],
-      //   cover: item?.volumeInfo?.imageLinks?.smallThumbnail,
-      //   year: new Date(item?.volumeInfo?.publishedDate)?.getFullYear(),
-      //   numberOfPages: item?.volumeInfo?.pageCount,
-      // };
+      return {
+        isbn: id,
+        title: volumeInfo?.title,
+        author: volumeInfo?.authors?.[0],
+        resume: volumeInfo?.description,
+        genre: volumeInfo?.categories?.[0],
+        cover: volumeInfo?.imageLinks?.smallThumbnail,
+        year: volumeInfo?.publishedDate ? new Date(volumeInfo?.publishedDate).getFullYear() : undefined,
+        numberOfPages: volumeInfo?.pageCount,
+      };
 
     }),
   );
 
-  // console.log('suggestBooks', suggestBooks);
-
-  return suggestBooks;
+  // Le filter enlève les valeurs null ou undefined du tableau
+  return suggestBooks.filter(book => book !== null || undefined);
 
 }

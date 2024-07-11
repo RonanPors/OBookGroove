@@ -8,8 +8,9 @@ const stateKey = generateRandomString(64);
 // On renseigne les informations fournies par spotify pour pouvoir s'identifier auprès de l'API Tiers.
 const spotifyClientId = process.env.SPOTIFY_APP_CLIENT_ID;
 const spotifyClientSecret = process.env.SPOTIFY_APP_CLIENT_SECRET;
-const redirect_uri = process.env.NODE_ENV=='production' ? process.env.BASE_URL + process.env.SPOTIFY_REDIRECT_URI_FRONT :
-  process.env.SPOTIFY_REDIRECT_URI; //!temporary
+const redirect_uri = 'http://localhost:3000/spotify/callback';
+// const redirect_uri = process.env.NODE_ENV=='production' ? process.env.BASE_URL + process.env.SPOTIFY_REDIRECT_URI_FRONT :
+//   process.env.SPOTIFY_REDIRECT_URI; //!temporary
 
 export default {
 

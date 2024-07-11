@@ -24,7 +24,7 @@ CREATE TABLE "book" (
     "title" TEXT NOT NULL,
     "author" TEXT,
     "resume" TEXT,
-    "genre" TEXT [] NOT NULL,
+    "genre" TEXT [],
     "cover" TEXT,
     "year" INT,
     "number_of_pages" INT,

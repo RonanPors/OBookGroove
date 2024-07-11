@@ -83,17 +83,19 @@ export default {
     //! Utiliser plutôt les titres et les auteurs fournis par Mistral AI
     const suggestBooks = await getGoogleBooks(mistralBooks);
 
-    return suggestBooks;
-    // Boucler sur les 40 livres et vérifier ceux qui ont déjà un isbn en BDD
+    // Boucler sur les 20 livres et vérifier ceux qui ont déjà un isbn en BDD
     // Requête pour récupérer dans un tableau les ISBN avec l'id du book déjà présent dans la table book
     const booksAlreadyPresent = await Promise.all(
       suggestBooks.map(({ isbn }) => bookDatamapper.findByIsbn(isbn)),
     );
 
+    // Filtrer les résultats pour éliminer les valeurs undefined ou null
+    const filteredBooksAlreadyPresent = booksAlreadyPresent.filter((book) => book !== undefined || null);
+
     // Vérifier l'id des livres trouvés dans la table d'association si ces livres sont lié à l'utilisateur actuellement ciblé
     // Vérifier seulement si le is_active ET/OU is_favorite true
     const userHasBookAlreadyPresentTrue = await Promise.all(
-      booksAlreadyPresent.map(({ id: bookId }) => userHasBookDatamapper.findAll({
+      filteredBooksAlreadyPresent.map(({ id: bookId }) => userHasBookDatamapper.findAll({
         where: {
           bookId,
           userId,
@@ -107,19 +109,32 @@ export default {
       })),
     );
 
-    // => S'il existe des associations entre les livres et l'utilisateur actuellement ciblé, supprimer ces livre des 40 livres
-    const newSuggestBooks = userHasBookAlreadyPresentTrue.map((association) =>
-      suggestBooks.filter((book) => book.isbn !== association.isbn),
+    // Filtrer les résultats pour éliminer les valeurs undefined ou null
+    const filteredUserHasBookAlreadyPresentTrue = userHasBookAlreadyPresentTrue.filter((association) => association !== undefined || null);
+
+    // S'il existe des associations entre les livres et l'utilisateur actuellement ciblé, supprimer ces livre des 20 livres
+    // => Commencer par créer un tableau des livres qui sont en association TRUE avec l'utilisateur
+    const booksAlreadyPresentTrue = await Promise.all(
+      filteredUserHasBookAlreadyPresentTrue.map((association) => bookDatamapper.findByPk(association.bookId)),
     );
 
+    // Filtrer les résultats pour éliminer les valeurs undefined ou null
+    const filteredBooksAlreadyPresentTrue = booksAlreadyPresentTrue.filter((book) => book !== undefined || null);
+
+    // => Ensuite, créer un tableau de suggestions qui n'ont pas le même isbn que les livres du tableau ci-dessus
+    const newSuggestBooks = suggestBooks.filter((book) => !filteredBooksAlreadyPresentTrue.includes(book.isbn));
+
+    // Filtrer les résultats pour éliminer les valeurs undefined ou null
+    const filteredSuggestBooks = newSuggestBooks.filter((book) => book !== undefined || null);
+
     // => Vérifier qu'il y ait au moins 10 livres
-    if (newSuggestBooks.length < 10)
+    if (filteredSuggestBooks?.length < 10)
       throw new ErrorApi('NO_TOP_TRACKS_FOUND', 'Les suggestions sont inférieur à 10 livres.', { status: 404 });
 
     // On en choisi 10 Random.
     //! A refaire au propre plus tard avec une fonction utils
     const randomSuggestBooks = [];
-    for (let i = 0; randomSuggestBooks.length !== 10; i++) {
+    for (let i = 0; randomSuggestBooks.length < 10; i++) {
 
       const randoms = [];
 
@@ -152,6 +167,7 @@ export default {
 
       randomSuggestBooks.map(async (suggest) => {
 
+        // Vérifier si le livre existe déjà en bdd
         let book = await bookDatamapper.findByIsbn(suggest.isbn);
 
         // SI le livre n'est pas trouvé en BDD
@@ -163,7 +179,7 @@ export default {
             title: suggest.title,
             author: suggest.author,
             resume: suggest.resume,
-            genre: suggest.genre, // tableau
+            // genre: [ suggest.genre ], // tableau //! problème ici
             cover: suggest.cover,
             year: suggest.year,
             numberOfPages: suggest.numberOfPages,
@@ -182,8 +198,8 @@ export default {
           isFavorite: false,
         });
 
-        // Retourner le livre bien formaté
-        return book;
+        // Retourner le livre déjà existant ou nouvellement créé en BDD
+        return await bookDatamapper.findByIsbn(suggest.isbn);
 
       }),
 

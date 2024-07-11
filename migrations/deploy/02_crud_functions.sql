@@ -52,7 +52,7 @@ CREATE FUNCTION "insert_book"(json) RETURNS "book" AS $$
     $1->>'author',
     $1->>'resume',
     ($1->>'genre')::TEXT[],
-    $1->>'cover',
+    COALESCE($1->>'cover', NULL),
     ($1->>'year')::INT,
     ($1->>'number_of_pages')::INT
   ) RETURNING *

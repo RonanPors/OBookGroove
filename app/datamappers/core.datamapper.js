@@ -115,6 +115,8 @@ class CoreDatamapper {
 
     const newInputData = changeKeys.snakeCase(inputData);
 
+    console.log('newInputData:', newInputData);
+
     const { rows: [row] } = await this.client.raw(`
       SELECT *
       FROM insert_${this.tableName}
