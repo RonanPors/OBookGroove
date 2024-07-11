@@ -1,6 +1,7 @@
-import { getUserTopTraks } from "./spotifyUtils/getUserTopTraks.js";
-import { getTitleBooks } from "./geminiUtils/getTitleBooks.js";
+import { getUserTopTracks } from "./spotifyUtils/getUserTopTraks.js";
+import { getMistralBooks } from "./mistralAIUtils/getMistralBooks.js";
 import { updateActiveBooks } from "./updateActiveBook.js";
+import { getGoogleBooks } from "../utils/googleBooksUtils/getGoogleBooks.js";
 import { userHasBookDatamapper, bookDatamapper } from "../datamappers/index.datamapper.js";
 import ErrorApi from "../errors/api.error.js";
 
@@ -43,8 +44,8 @@ export default {
       },
     });
 
-    //Si il y a 200 livres actifs, on récupère les 20 dernier livres actifs et on les retourne au front avec un message pour informer l'utilisateur qu'il a atteind sa limite de requêtes autorisées.
-    if (newDataBooksUser.length >= 100) {
+    //Si il y a 10 livres actifs, on récupère les 10 dernier livres actifs et on les retourne au front avec un message pour informer l'utilisateur qu'il a atteind sa limite de requêtes autorisées.
+    if (newDataBooksUser.length >= 10) {
       //!Attention on ne récupère que les id des livres de l'utilisateur dans currentIdBooksUser.
       const currentIdBooksUser = await userHasBookDatamapper.findAll({
         limit: 10,
@@ -64,23 +65,25 @@ export default {
         currentBooks.push(await bookDatamapper.findByPk(book.bookId));
       });
 
-      // Retourner les 20 livres de l'utilisateur.
+      // Retourner les 10 livres de l'utilisateur.
       return currentBooks;
     };
 
-    // Récupération des tops musique de l'utilisateur à l'API Spotify.
-    const trackIds = await getUserTopTraks(accessTokenSpotify);
+    // Récupération des 10 dernières musiques de l'utilisateur à l'API Spotify.
+    const tracks = await getUserTopTracks(accessTokenSpotify);
 
-    if (!trackIds)
+
+    if (!tracks)
       throw new ErrorApi('NO_TOP_TRACKS_FOUND', 'Aucune musique trouvée pour l\'utilisateur.', { status: 404 });
 
-    //!Utilisation de Gemini pour récupérer des titres et auteurs de livres sur la base des musiques:
+    // Utilisation de Mistral AI pour récupérer des titres et auteurs de livres sur la base des musiques:
+    const mistralBooks = await getMistralBooks(tracks);
 
+    // Récupérer 10 livres des titre retournées par Mistral depuis l'API Google Books
+    //! Utiliser plutôt les titres et les auteurs fournis par Mistral AI
+    const suggestBooks = await getGoogleBooks(mistralBooks);
 
-    // Récupérer 40 livres des titre retournées par gemini depuis l'API Google Books
-    //! Utiliser plutôt les titres et les auteurs fournis par Gemini
-    const suggestBooks = await getTitleBooks(geminiBooksSuggest);
-
+    return suggestBooks;
     // Boucler sur les 40 livres et vérifier ceux qui ont déjà un isbn en BDD
     // Requête pour récupérer dans un tableau les ISBN avec l'id du book déjà présent dans la table book
     const booksAlreadyPresent = await Promise.all(
