@@ -165,7 +165,7 @@ router.get('/spotify/callback', controllerHandler(spotifyController.callbackSpot
  * @return {object} 200 - success response - application/json
  * @return {object} 400 - Bad request response
  */
-router.get('/spotify/verify-tokens', controllerHandler(spotifyController.verifySpotifyUserToken));
+router.get('/spotify/tokens', controllerHandler(spotifyController.verifySpotifyUserToken));
 
 router.use((_, __, next) => {
   next(new ErrorApi('NOT_FOUND', 'Resource not found', {status: 404}));
