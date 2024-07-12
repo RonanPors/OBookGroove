@@ -22,7 +22,7 @@ CREATE TABLE "book" (
     "id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "isbn" TEXT NOT NULL,
     "title" TEXT NOT NULL,
-    "author" TEXT,
+    "author" TEXT [],
     "resume" TEXT,
     "genre" TEXT [],
     "cover" TEXT,

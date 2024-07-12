@@ -49,9 +49,9 @@ CREATE FUNCTION "insert_book"(json) RETURNS "book" AS $$
   ) VALUES (
     $1->>'isbn',
     $1->>'title',
-    COALESCE($1->>'author', NULL),
+    string_to_array($1->>'author', ',')::TEXT[],
     COALESCE($1->>'resume', NULL),
-    ($1->>'genre')::TEXT[],
+    string_to_array($1->>'genre', ',')::TEXT[],
     COALESCE($1->>'cover', NULL),
     COALESCE(($1->>'year')::INT, NULL),
     COALESCE(($1->>'number_of_pages')::INT, NULL)
@@ -110,7 +110,7 @@ CREATE FUNCTION "update_book"(json) RETURNS "book" AS $$
   UPDATE "book" SET
     "isbn" = COALESCE($1->>'isbn', "isbn"),
     "title" = COALESCE($1->>'title', "title"),
-    "author" = COALESCE($1->>'author', "author"),
+    "author" = COALESCE(($1->>'author')::TEXT[], "author"),
     "resume" = COALESCE($1->>'resume', "resume"),
     "genre" = COALESCE(($1->>'genre')::TEXT[], "genre"),
     "cover" = COALESCE($1->>'cover', "cover"),

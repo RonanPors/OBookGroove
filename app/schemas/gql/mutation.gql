@@ -15,4 +15,14 @@ type Mutation {
   createComment(input: CommentInputCreate): Comment
   updateComment(input: CommentInputUpdate): Comment
   deleteComment(bookId: Int!, userId: Int!): [Comment]!
+
+  createCollection(input: CollectionInputCreate): Collection
+  updateCollection(input: CollectionInputUpdate): Collection
+  deleteCollection(id: Int!): [Collection]!
+
+  createCollectionHasBook(input: CollectionHasBookInputCreate): CollectionHasBook
+  # L'update ne sert strictement à rien pour l'instant
+  updateCollectionHasBook(input: CollectionHasBookInputUpdate): CollectionHasBook
+  deleteCollectionHasBook(collectionId: Int!, bookId: Int!): [CollectionHasBook]!
+
 }

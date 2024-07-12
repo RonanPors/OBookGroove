@@ -8,7 +8,7 @@ const stateKey = generateRandomString(64);
 // On renseigne les informations fournies par spotify pour pouvoir s'identifier auprès de l'API Tiers.
 const spotifyClientId = process.env.SPOTIFY_APP_CLIENT_ID;
 const spotifyClientSecret = process.env.SPOTIFY_APP_CLIENT_SECRET;
-const redirect_uri = 'http://localhost:3000/spotify/callback';
+const redirect_uri = process.env.SPOTIFY_REDIRECT_URI;
 // const redirect_uri = process.env.NODE_ENV=='production' ? process.env.BASE_URL + process.env.SPOTIFY_REDIRECT_URI_FRONT :
 //   process.env.SPOTIFY_REDIRECT_URI; //!temporary
 
@@ -99,7 +99,7 @@ export default {
   async verifySpotifyUserToken(req, res) {
 
     // Fonction qui vérifie la présence des tokens spotify.
-    if (!req.cookie('refresh_token_spotify') || !req.cookie('access_token_spotify'))
+    if (!req.cookies['refresh_token_spotify'] || !req.cookies['access_token_spotify'])
       throw new ErrorApi('FAILED_SPOTIFY_AUTH', 'Échec de l\'authentification avec Spotify.', { status: 500 });
 
     // Récupération du refresh token Spotify.
@@ -110,7 +110,7 @@ export default {
       method: 'POST',
       headers: {
         'content-type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Basic '+ Buffer.from(spotifyClientId + ':' + spotifyClientSecret).toString('base64'),
+        'Authorization': 'Basic ' + Buffer.from(spotifyClientId + ':' + spotifyClientSecret).toString('base64'),
       },
       body: new URLSearchParams({
         grant_type: 'refresh_token',
@@ -125,11 +125,13 @@ export default {
 
     const data = await response.json();
 
-    if (data.refresh_token && data.access_token) {
-      res.cookie('access_token_spotify', data.access_token, { httpOnly: true, secure: false }); //! A passer en secure true en production
-      res.cookie('refresh_token_spotify', data.refresh_token, { httpOnly: true, secure: false }); //! A passer en secure true en production
+    if (!data.refresh_token || !data.access_token)
+      res.json({ ok: false});
 
-      res.json({ ok: true});
-    };
+    res.cookie('access_token_spotify', data.access_token, { httpOnly: true, secure: false }); //! A passer en secure true en production
+    res.cookie('refresh_token_spotify', data.refresh_token, { httpOnly: true, secure: false }); //! A passer en secure true en production
+
+    res.json({ ok: true});
+
   },
 };

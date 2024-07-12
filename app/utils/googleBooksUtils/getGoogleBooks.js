@@ -24,9 +24,9 @@ export async function getGoogleBooks(books) {
       return {
         isbn: id,
         title: volumeInfo?.title,
-        author: volumeInfo?.authors?.[0],
+        author: volumeInfo?.authors?.join(','),
         resume: volumeInfo?.description,
-        genre: volumeInfo?.categories?.[0],
+        genre: volumeInfo?.categories?.join(','),
         cover: volumeInfo?.imageLinks?.smallThumbnail,
         year: volumeInfo?.publishedDate ? new Date(volumeInfo?.publishedDate).getFullYear() : undefined,
         numberOfPages: volumeInfo?.pageCount,

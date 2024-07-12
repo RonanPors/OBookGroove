@@ -82,9 +82,9 @@ class CoreDatamapper {
   async findAll(params) {
 
     // Transformation du where en snake_case
-    const where = changeKeys.snakeCase(params.where);
-    const orWhere = changeKeys.snakeCase(params.orWhere);
-    const andWhere = changeKeys.snakeCase(params.andWhere);
+    const where = changeKeys.snakeCase(params?.where);
+    const orWhere = changeKeys.snakeCase(params?.orWhere);
+    const andWhere = changeKeys.snakeCase(params?.andWhere);
 
     const query = this.client.from(this.tableName);
 
@@ -115,8 +115,7 @@ class CoreDatamapper {
 
     const newInputData = changeKeys.snakeCase(inputData);
 
-    console.log('newInputData:', newInputData);
-
+    // Le stringify va retirer les propriétés undefined
     const { rows: [row] } = await this.client.raw(`
       SELECT *
       FROM insert_${this.tableName}
@@ -133,6 +132,7 @@ class CoreDatamapper {
 
     const newInputData = changeKeys.snakeCase(inputData);
 
+    // Le stringify va retirer les propriétés undefined
     const { rows: [row] } = await this.client.raw(`
       SELECT *
       FROM update_${this.tableName}
@@ -147,9 +147,9 @@ class CoreDatamapper {
 
   async delete(params) {
 
-    const where = changeKeys.snakeCase(params.where);
-    const orWhere = changeKeys.snakeCase(params.orWhere);
-    const andWhere = changeKeys.snakeCase(params.andWhere);
+    const where = changeKeys.snakeCase(params?.where);
+    const orWhere = changeKeys.snakeCase(params?.orWhere);
+    const andWhere = changeKeys.snakeCase(params?.andWhere);
 
     const query = this.client.from(this.tableName);
 

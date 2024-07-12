@@ -1,5 +1,5 @@
 import { unauthorizedError, notFoundError } from '../errors/gql.error.js';
-import { surveyDatamapper, userHasBookDatamapper } from '../datamappers/index.datamapper.js';
+import { surveyDatamapper, userHasBookDatamapper, collectionDatamapper } from '../datamappers/index.datamapper.js';
 import { isoToDate } from '../utils/isoToDate.js';
 
 export default {
@@ -96,6 +96,28 @@ export default {
       questionAnswer: JSON.parse(survey.questionAnswer),
     }));
 
+  },
+
+  async collections({ id }, { limit, offset }, { user }) {
+
+    if (!user) throw unauthorizedError('Missing authentication.');
+
+    const collections = await collectionDatamapper.findAll({
+      limit,
+      offset,
+      where: {
+        userId: id,
+      },
+      oder: {
+        column: 'created_at',
+        direction: 'desc',
+      },
+    });
+
+    if (!collections)
+      throw notFoundError(`No current collections found.`);
+
+    return collections;
   },
 
 };

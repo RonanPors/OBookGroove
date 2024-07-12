@@ -44,8 +44,8 @@ export default {
       },
     });
 
-    //Si il y a 10 livres actifs, on récupère les 10 dernier livres actifs et on les retourne au front avec un message pour informer l'utilisateur qu'il a atteind sa limite de requêtes autorisées.
-    if (newDataBooksUser.length >= 10) {
+    //Si il y a 200 livres actifs, on récupère les 10 dernier livres actifs et on les retourne au front avec un message pour informer l'utilisateur qu'il a atteind sa limite de requêtes autorisées.
+    if (newDataBooksUser.length >= 200) {
       //!Attention on ne récupère que les id des livres de l'utilisateur dans currentIdBooksUser.
       const currentIdBooksUser = await userHasBookDatamapper.findAll({
         limit: 10,
@@ -60,10 +60,11 @@ export default {
       });
 
       //On récupère les livres de la table book.
-      const currentBooks = [];
-      currentIdBooksUser.map(async book => {
-        currentBooks.push(await bookDatamapper.findByPk(book.bookId));
-      });
+      const currentBooks = await Promise.all(
+        currentIdBooksUser.map(async book =>
+          await bookDatamapper.findByPk(book.bookId),
+        ),
+      );
 
       // Retourner les 10 livres de l'utilisateur.
       return currentBooks;
@@ -71,7 +72,6 @@ export default {
 
     // Récupération des 10 dernières musiques de l'utilisateur à l'API Spotify.
     const tracks = await getUserTopTracks(accessTokenSpotify);
-
 
     if (!tracks)
       throw new ErrorApi('NO_TOP_TRACKS_FOUND', 'Aucune musique trouvée pour l\'utilisateur.', { status: 404 });
@@ -100,20 +100,26 @@ export default {
 
     // Vérifier l'id des livres trouvés dans la table d'association si ces livres sont lié à l'utilisateur actuellement ciblé
     // Vérifier seulement si le is_active ET/OU is_favorite true
-    const userHasBookAlreadyPresentTrue = await Promise.all(
-      filteredBooksAlreadyPresent.map(({ id: bookId }) => userHasBookDatamapper.findAll({
+    const userHasBookAlreadyPresentTrue = [];
+    for (let i = 0; i < filteredBooksAlreadyPresent.length; i++) {
+
+      const [ book ] = await userHasBookDatamapper.findAll({
         where: {
-          bookId,
+          bookId: filteredBooksAlreadyPresent[i].id,
           userId,
           isActive: true,
         },
         orWhere: {
-          bookId,
+          bookId: filteredBooksAlreadyPresent[i].id,
           userId,
           isFavorite: true,
         },
-      })),
-    );
+      });
+
+      if (book)
+        userHasBookAlreadyPresentTrue.push(book);
+
+    }
 
     console.log('4');
 
@@ -136,7 +142,8 @@ export default {
     console.log('7');
 
     // => Ensuite, créer un tableau de suggestions qui n'ont pas le même isbn que les livres du tableau ci-dessus
-    const newSuggestBooks = suggestBooks.filter((book) => !filteredBooksAlreadyPresentTrue.includes(book.isbn));
+    const existingIsbns = filteredBooksAlreadyPresentTrue.map(book => book.isbn);
+    const newSuggestBooks = suggestBooks.filter((book) => !existingIsbns.includes(book.isbn));
 
     console.log('8');
 
@@ -159,7 +166,7 @@ export default {
       const randoms = [];
 
       // 0 à (length - 1)
-      const random = Math.floor(Math.random() * newSuggestBooks.length);
+      const random = Math.floor(Math.random() * filteredSuggestBooks.length);
 
       // Vérifier que le nombre aléatoire ne soit pas déjà pris grâce au tableau randoms[]
       if (!randoms.includes(random)) {
@@ -168,7 +175,7 @@ export default {
         randoms.push(random);
 
         // Mettre le suggestBook dans le tableau final des suggestions
-        randomSuggestBooks.push(newSuggestBooks[random]);
+        randomSuggestBooks.push(filteredSuggestBooks[random]);
 
       }
 
@@ -201,7 +208,7 @@ export default {
             title: suggest.title,
             author: suggest.author,
             resume: suggest.resume,
-            // genre: [ suggest.genre ], // tableau //! problème ici, à mettre et JSON (stringify)
+            genre: suggest.genre, // tableau //! problème ici, à mettre et JSON (stringify)
             cover: suggest.cover,
             year: suggest.year,
             numberOfPages: suggest.numberOfPages,

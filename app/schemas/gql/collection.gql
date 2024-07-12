@@ -1,0 +1,24 @@
+type Collection {
+
+  id: Int
+  userId: Int
+  collectionName: String
+
+  books(limit: Int, offset: Int): [Book]!
+
+}
+
+input CollectionInputCreate {
+
+  userId: Int!
+  collectionName: String
+
+}
+
+input CollectionInputUpdate {
+
+  id: Int!
+  userId: Int
+  collectionName: String
+
+}
