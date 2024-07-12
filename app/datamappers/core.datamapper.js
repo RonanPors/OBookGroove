@@ -121,7 +121,7 @@ class CoreDatamapper {
       SELECT *
       FROM insert_${this.tableName}
       (?)
-    `, [newInputData]);
+    `, [JSON.stringify(newInputData)]);
 
     const newRow = changeKeys.camelCase(row);
 
@@ -137,7 +137,7 @@ class CoreDatamapper {
       SELECT *
       FROM update_${this.tableName}
       (?)
-    `, [newInputData]);
+    `, [JSON.stringify(newInputData)]);
 
     const newRow = changeKeys.camelCase(row);
 

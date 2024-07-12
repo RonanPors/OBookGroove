@@ -49,12 +49,12 @@ CREATE FUNCTION "insert_book"(json) RETURNS "book" AS $$
   ) VALUES (
     $1->>'isbn',
     $1->>'title',
-    $1->>'author',
-    $1->>'resume',
+    COALESCE($1->>'author', NULL),
+    COALESCE($1->>'resume', NULL),
     ($1->>'genre')::TEXT[],
     COALESCE($1->>'cover', NULL),
-    ($1->>'year')::INT,
-    ($1->>'number_of_pages')::INT
+    COALESCE(($1->>'year')::INT, NULL),
+    COALESCE(($1->>'number_of_pages')::INT, NULL)
   ) RETURNING *
 
 $$ LANGUAGE sql
