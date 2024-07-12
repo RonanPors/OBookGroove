@@ -83,6 +83,12 @@ export default {
     //! Utiliser plutôt les titres et les auteurs fournis par Mistral AI
     const suggestBooks = await getGoogleBooks(mistralBooks);
 
+    // => Vérifier qu'il y ait au moins 10 livres
+    //! Si Google Books renvoi moins de 10 livres, ça ne sert à rien d'aller plus loin car ça ne fonctionnera pas
+    //! Donc autant rapeller le service à partir d'ici et ne pas faire des requêtes à la BDD pour rien
+    if (suggestBooks?.length < 10)
+      throw new ErrorApi('NO_TOP_TRACKS_FOUND', 'Le retour de Google Books est inférieur à 10 livres.', { status: 404 });
+
     console.log('1');
 
     // Boucler sur les 20 livres et vérifier ceux qui ont déjà un isbn en BDD

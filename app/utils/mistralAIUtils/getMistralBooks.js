@@ -9,11 +9,13 @@ export async function getMistralBooks(tracks) {
   const client = new MistralClient(process.env.MISTRAL_API_KEY);
 
   const input = `
-    Peux tu me suggerer un genre littéraire de livre pour chacune des musiques ci dessous dans un objet contenant une propriété "associations":
+    Propriété « associations »: suggère un genre littéraire pour chaque musiques:
     ${tracks}
-    Propose moi ensuite 20 livres en édition francaise de ces genres en indiquant le titre du livre, l'auteur et le genre correspondant et ajoute les à l'objet dans une seconde propriété "livres".
-    Si il y a des espaces dans les chaines de caractère remplace les par des "+".
-    Je veux que ta réponse soit SEULEMENT le résultat des livres que tu me proposes sans texte supplémentaire dans un format JSON et dans un objet nommé livres.
+    Propriété « livres »: propose moi 20 livres en rapport avec le style de genre des musiques.
+    Ajoute un « + » à chaque espaces pour les strings.
+    Retourne la totalité en un objet JSON sans texte supplémentaire.
+    Voici un exemple de format JSON:
+    {"association":[{"track": "musique","artist": "artiste","genre": "genre"}],"livres":[{"titre": "titre","auteur": "auteur","genre": "genre"}]}
   `;
 
   // chatResponse.choices[0].message.content
@@ -29,6 +31,8 @@ export async function getMistralBooks(tracks) {
 
   if(!livres)
     throw new ErrorApi('FAILED_GET_MISTAL_BOOKS', 'Échec de récupération des livres Gemini.', { status: 500 });
+
+  console.log('livres:', livres);
 
   return livres;
 }
