@@ -129,6 +129,7 @@ CREATE FUNCTION "update_user_has_book"(json) RETURNS "user_has_book" AS $$
   UPDATE "user_has_book" SET
     "is_active" = COALESCE(($1->>'is_active')::BOOLEAN, "is_active"),
     "is_favorite" = COALESCE(($1->>'is_favorite')::BOOLEAN, "is_favorite"),
+    "is_blacklisted" = COALESCE(($1->>'is_blacklisted')::BOOLEAN, "is_blacklisted"),
     "note" = COALESCE(($1->>'note')::INT, "note"),
     "updated_at" = now()
   WHERE "book_id" = ($1->>'book_id')::INT AND "user_id" = ($1->>'user_id')::INT
