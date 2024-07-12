@@ -17,9 +17,10 @@ type User {
 	books: [Book]!
 	favoriteBooks(limit: Int, offset: Int): [Book]!
 	currentBooks(limit: Int, offset: Int): [Book]!
+	booksRead(limit: Int, offset: Int): [Book]!
 
-  surveys: [Survey]!
-  collections(limit: Int, offset: Int): [Collection]!
+	surveys: [Survey]!
+	collections(limit: Int, offset: Int): [Collection]!
 }
 
 type UserSubList {
