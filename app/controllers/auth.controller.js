@@ -116,12 +116,12 @@ export default {
     res.cookie('accessTokenObg', response.accessToken, {
       httpOnly: true,
       secure: false,
-      sameSite: 'Strict',
+      sameSite: 'Lax',
     });
     res.cookie('refreshTokenObg', response.refreshToken, {
       httpOnly: true,
       secure: false,
-      sameSite: 'Strict',
+      sameSite: 'Lax',
     });
 
     // Retourner les deux tokens ici
@@ -207,12 +207,12 @@ export default {
     res.cookie('accessTokenObg', response.accessToken, {
       httpOnly: true,
       secure: false,
-      sameSite: 'Strict',
+      sameSite: 'Lax',
     });
     res.cookie('refreshTokenObg', response.refreshToken, {
       httpOnly: true,
       secure: false,
-      sameSite: 'Strict',
+      sameSite: 'Lax',
     });
 
     // Renvoyer en réponse les deux tokens à jour
@@ -350,12 +350,12 @@ export default {
     res.cookie('accessTokenObg', response.accessToken, {
       httpOnly: true,
       secure: false,
-      sameSite: 'Strict',
+      sameSite: 'Lax',
     });
     res.cookie('refreshTokenObg', response.refreshToken, {
       httpOnly: true,
       secure: false,
-      sameSite: 'Strict',
+      sameSite: 'Lax',
     });
 
     return res.json(response);
