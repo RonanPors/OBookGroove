@@ -1,6 +1,7 @@
 // Fonction de requête à Gemini pour la récupèration des titres de livres.
 import MistralClient from '@mistralai/mistralai';
 import * as changeKeys from 'change-case/keys';
+import ErrorApi from '../../errors/api.error.js';
 
 
 export async function getMistralBooks(tracks) {
@@ -25,6 +26,9 @@ export async function getMistralBooks(tracks) {
   const contentParse = JSON.parse(content);
 
   const { livres } = changeKeys.camelCase(contentParse, 3);
+
+  if(!livres)
+    throw new ErrorApi('FAILED_GET_MISTAL_BOOKS', 'Échec de récupération des livres Gemini.', { status: 500 });
 
   return livres;
 }
