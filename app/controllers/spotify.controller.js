@@ -87,7 +87,7 @@ export default {
 
     // Lancement du service qui retourne 20 livres de l'API GoogleBooks ou de notre BDD.
     console.log('req.auth:', req.auth);
-    const suggestBooks = await booksGenerator.init(data.access_token, req.auth.sub);
+    const suggestBooks = await booksGenerator.init(data.access_token, req?.auth?.sub);
 
     if (!suggestBooks)
       throw new ErrorApi('FAILED_BOOKS_SUGGEST', 'Échec de récupération des livres de suggestion.', { status: 500 });

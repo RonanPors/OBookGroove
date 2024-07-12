@@ -161,18 +161,17 @@ export default {
     // On en choisi 10 Random.
     //! A refaire au propre plus tard avec une fonction utils
     const randomSuggestBooks = [];
+    const randoms = new Set();
     for (let i = 0; randomSuggestBooks.length < 10; i++) {
-
-      const randoms = [];
 
       // 0 à (length - 1)
       const random = Math.floor(Math.random() * filteredSuggestBooks.length);
 
       // Vérifier que le nombre aléatoire ne soit pas déjà pris grâce au tableau randoms[]
-      if (!randoms.includes(random)) {
+      if (!randoms.has(random)) {
 
         // Si le nombre aléatoire est bien nouveau, le mettre dans le tableau randoms[]
-        randoms.push(random);
+        randoms.add(random);
 
         // Mettre le suggestBook dans le tableau final des suggestions
         randomSuggestBooks.push(filteredSuggestBooks[random]);
@@ -197,6 +196,7 @@ export default {
       randomSuggestBooks.map(async (suggest) => {
 
         // Vérifier si le livre existe déjà en bdd
+        //! Normalement cette recherche ne sert à rien à ce niveau là
         let book = await bookDatamapper.findByIsbn(suggest.isbn);
 
         // SI le livre n'est pas trouvé en BDD
