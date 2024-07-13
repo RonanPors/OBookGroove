@@ -21,6 +21,10 @@ type Mutation {
   updateCollection(input: CollectionInputUpdate): Collection
   deleteCollection(id: Int!): Collection
 
+  createCollectionShare(input: CollectionShareInputCreate): CollectionShare
+  updateCollectionShare(input: CollectionShareInputUpdate): CollectionShare
+  deleteCollectionShare(collectionId: Int!, userId: Int!): CollectionShare
+
   createCollectionHasBook(input: CollectionHasBookInputCreate): CollectionHasBook
   # L'update ne sert strictement à rien pour l'instant
   updateCollectionHasBook(input: CollectionHasBookInputUpdate): CollectionHasBook

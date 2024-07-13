@@ -4,6 +4,7 @@ import {
   userHasBookDatamapper,
   commentDatamapper,
   collectionDatamapper,
+  collectionShareDatamapper,
   collectionHasBookDatamapper,
 } from '../datamappers/index.datamapper.js';
 import { unauthorizedError, notFoundError } from '../errors/gql.error.js';
@@ -214,6 +215,48 @@ export default {
       throw notFoundError(`Erreur lors de la suppresion de la collection.`);
 
     return deletedCollection;
+
+  },
+
+  async createCollectionShare(_, { input }, { user }) {
+
+    if (!user) throw unauthorizedError('Missing authentication.');
+
+    const createdCollectionShare = await collectionShareDatamapper.create(input);
+
+    if (!createdCollectionShare)
+      throw notFoundError(`Erreur lors de la création du partage de la collection.`);
+
+    return createdCollectionShare;
+
+  },
+
+  async updateCollectionShare(_, { input }, { user }) {
+
+    if (!user) throw unauthorizedError('Missing authentication.');
+
+    const updatedCollectionShare = await collectionShareDatamapper.update(input);
+
+    if (!updatedCollectionShare)
+      throw notFoundError(`Erreur lors de la mise à jour du partage de la collection.`);
+
+    return updatedCollectionShare;
+
+  },
+
+  async deleteCollectionShare(_, { collectionId, userId }, { user }) {
+
+    if (!user) throw unauthorizedError('Missing authentication.');
+
+    const deletedCollectionShare = await collectionShareDatamapper.delete({
+      collectionId,
+      userId,
+    });
+
+    if (!deletedCollectionShare)
+      throw notFoundError(`Erreur lors de la suppresion du partage de la collection.`);
+
+    return deletedCollectionShare;
 
   },
 
