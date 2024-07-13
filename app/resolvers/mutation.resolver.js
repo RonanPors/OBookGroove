@@ -218,7 +218,9 @@ export default {
     if (!user) throw unauthorizedError('Missing authentication.');
 
     const deletedCollection = await collectionDatamapper.delete({
-      id,
+      where: {
+        id,
+      },
     });
 
     if (!deletedCollection)
@@ -259,8 +261,10 @@ export default {
     if (!user) throw unauthorizedError('Missing authentication.');
 
     const deletedCollectionShare = await collectionShareDatamapper.delete({
-      collectionId,
-      userId,
+      where: {
+        collectionId,
+        userId,
+      },
     });
 
     if (!deletedCollectionShare)
@@ -301,8 +305,10 @@ export default {
     if (!user) throw unauthorizedError('Missing authentication.');
 
     const deletedCollectionHasBook = await collectionHasBookDatamapper.delete({
-      collectionId,
-      bookId,
+      where: {
+        collectionId,
+        bookId,
+      },
     });
 
     if (!deletedCollectionHasBook)
