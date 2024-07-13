@@ -28,6 +28,9 @@ app.use(cors({
 
 app.use(cookieParser());
 
+// Middleware qui sert à authentifier un utilisateur côté server
+app.use(authMiddleware);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -35,9 +38,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // Utilisation de swagger
 docMiddleware(app);
-
-// Middleware qui sert à authentifier un utilisateur côté server
-app.use(authMiddleware);
 
 //! ====== APOLLO SERVER MIDDLEWARE =======
 

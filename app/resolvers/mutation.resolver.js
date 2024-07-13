@@ -28,7 +28,11 @@ export default {
 
     if (!user) throw unauthorizedError('Missing authentication.');
 
-    const deletedUser = await userDatamapper.delete({ id });
+    const deletedUser = await userDatamapper.delete({
+      where: {
+        id,
+      },
+    });
 
     if (!deletedUser)
       throw notFoundError(`Erreur lors de la suppression de l'utilisateur.`);
@@ -68,8 +72,10 @@ export default {
     if (!user) throw unauthorizedError('Missing authentication.');
 
     const deletedUserHasBook = await userHasBookDatamapper.delete({
-      bookId,
-      userId,
+      where: {
+        bookId,
+        userId,
+      },
     });
 
     if (!deletedUserHasBook)
@@ -122,7 +128,9 @@ export default {
     if (!user) throw unauthorizedError('Missing authentication.');
 
     const deletedSurvey = await surveyDatamapper.delete({
-      id,
+      where: {
+        id,
+      },
     });
 
     if (!deletedSurvey)
@@ -166,8 +174,10 @@ export default {
     if (!user) throw unauthorizedError('Missing authentication.');
 
     const deletedComment = await commentDatamapper.delete({
-      bookId,
-      userId,
+      where: {
+        bookId,
+        userId,
+      },
     });
 
     if (!deletedComment)

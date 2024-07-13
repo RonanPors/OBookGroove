@@ -82,11 +82,17 @@ class CoreDatamapper {
   async findAll(params) {
 
     // Transformation du where en snake_case
-    const where = changeKeys.snakeCase(params.where);
+    const where = changeKeys.snakeCase(params?.where);
+    const orWhere = changeKeys.snakeCase(params?.orWhere);
+    const andWhere = changeKeys.snakeCase(params?.andWhere);
 
     const query = this.client.from(this.tableName);
 
     if (where) query.where(where);
+
+    if (orWhere) query.orWhere(orWhere);
+
+    if (andWhere) query.andWhere(andWhere);
 
     if (params?.limit) query.limit(params.limit);
 
@@ -109,11 +115,12 @@ class CoreDatamapper {
 
     const newInputData = changeKeys.snakeCase(inputData);
 
+    // Le stringify va retirer les propriétés undefined
     const { rows: [row] } = await this.client.raw(`
       SELECT *
       FROM insert_${this.tableName}
       (?)
-    `, [newInputData]);
+    `, [JSON.stringify(newInputData)]);
 
     const newRow = changeKeys.camelCase(row);
 
@@ -125,11 +132,12 @@ class CoreDatamapper {
 
     const newInputData = changeKeys.snakeCase(inputData);
 
+    // Le stringify va retirer les propriétés undefined
     const { rows: [row] } = await this.client.raw(`
       SELECT *
       FROM update_${this.tableName}
       (?)
-    `, [newInputData]);
+    `, [JSON.stringify(newInputData)]);
 
     const newRow = changeKeys.camelCase(row);
 
@@ -137,18 +145,25 @@ class CoreDatamapper {
 
   }
 
-  async delete(where) {
+  async delete(params) {
 
-    const newWhere = changeKeys.snakeCase(where);
+    const where = changeKeys.snakeCase(params?.where);
+    const orWhere = changeKeys.snakeCase(params?.orWhere);
+    const andWhere = changeKeys.snakeCase(params?.andWhere);
 
-    const [ row ] = await this.client.from(this.tableName)
-      .where(newWhere)
-      .del()
-      .returning('*');
+    const query = this.client.from(this.tableName);
 
-    const newRow = changeKeys.camelCase(row);
+    if (where) query.where(where);
 
-    return newRow;
+    if (orWhere) query.orWhere(orWhere);
+
+    if (andWhere) query.andWhere(andWhere);
+
+    const rows = await query.del().returning('*');
+
+    const newRows = changeKeys.camelCase(rows);
+
+    return newRows;
 
   }
 

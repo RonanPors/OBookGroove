@@ -1,4 +1,3 @@
-
 import ErrorApi from '../errors/api.error.js';
 import queryString from 'node:querystring';
 import booksGenerator from '../utils/booksGenerator.js';
@@ -10,6 +9,8 @@ const stateKey = generateRandomString(64);
 const spotifyClientId = process.env.SPOTIFY_APP_CLIENT_ID;
 const spotifyClientSecret = process.env.SPOTIFY_APP_CLIENT_SECRET;
 const redirect_uri = process.env.SPOTIFY_REDIRECT_URI;
+// const redirect_uri = process.env.NODE_ENV=='production' ? process.env.BASE_URL + process.env.SPOTIFY_REDIRECT_URI_FRONT :
+//   process.env.SPOTIFY_REDIRECT_URI; //!temporary
 
 export default {
 
@@ -85,7 +86,8 @@ export default {
     res.cookie('refresh_token_spotify', data.refresh_token, { httpOnly: true, secure: false }); //! A passer en secure true en production
 
     // Lancement du service qui retourne 20 livres de l'API GoogleBooks ou de notre BDD.
-    const suggestBooks = await booksGenerator.init(req.cookies);
+    console.log('req.auth:', req.auth);
+    const suggestBooks = await booksGenerator.init(data.access_token, req?.auth?.sub);
 
     if (!suggestBooks)
       throw new ErrorApi('FAILED_BOOKS_SUGGEST', 'Échec de récupération des livres de suggestion.', { status: 500 });

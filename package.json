@@ -14,6 +14,8 @@
   "license": "ISC",
   "dependencies": {
     "@apollo/server": "^4.10.4",
+    "@mistralai/mistralai": "^0.5.0",
+    "axios": "^1.7.2",
     "bcrypt": "^5.1.1",
     "change-case": "^5.4.4",
     "cookie-parser": "^1.4.6",
