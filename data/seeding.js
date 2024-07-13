@@ -292,6 +292,32 @@ async function insertCollectionHasBook() {
   return result.rows;
 }
 
+async function insertCollectionShares() {
+  await pool.query('TRUNCATE TABLE "collection_share" RESTART IDENTITY CASCADE');
+
+  const queryStr = `
+    INSERT INTO "collection_share"
+    (
+      "collection_id",
+      "user_id"
+    )
+    VALUES
+    (
+      1, 1
+    ),
+    (
+      1, 2
+    ),
+    (
+      1, 3
+    )
+    RETURNING id
+  `;
+
+  const result = await pool.query(queryStr);
+  return result.rows;
+}
+
 (async () => {
 
   /**
@@ -335,6 +361,12 @@ async function insertCollectionHasBook() {
     */
   const insertedCollectionHasBook = await insertCollectionHasBook();
   console.log(`${insertedCollectionHasBook.length} CollectionHasBook inserted`);
+
+  /**
+    * Ajout des partages de collections en BDD
+    */
+  const insertedCollectionShares = await insertCollectionShares();
+  console.log(`${insertedCollectionShares.length} CollectionShares inserted`);
 
   pool.end();
 })();

@@ -1,0 +1,20 @@
+type CollectionShare {
+
+  userId: Int
+  collectionId: Int
+
+}
+
+input CollectionShareInputCreate {
+
+  userId: Int!
+  collectionId: Int!
+
+}
+
+input CollectionShareInputUpdate {
+
+  userId: Int!
+  collectionId: Int!
+
+}
