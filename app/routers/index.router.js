@@ -15,6 +15,7 @@ import controllerHandler  from '../middlewares/controller.handler.js';
 import ErrorApi from '../errors/api.error.js';
 //importation du gestionnaire finale d'erreurs.
 import errorHandler from '../middlewares/error.middleware.js';
+import sanitizeMiddleware from '../middlewares/sanitize.mw.js';
 
 const router = Router();
 
@@ -37,7 +38,7 @@ afin de pouvoir gérer les erreurs de manières optimisé */
  * @return {object} 200 - success response - application/json
  * @return {object} 400 - Bad request response
  */
-router.post('/auth/signup', validationMiddleware(userCreateSchema, 'body'), controllerHandler(authController.signup));
+router.post('/auth/signup', sanitizeMiddleware, validationMiddleware(userCreateSchema, 'body'), controllerHandler(authController.signup));
 
 /**
  * POST /auth/signin
@@ -52,7 +53,7 @@ router.post('/auth/signup', validationMiddleware(userCreateSchema, 'body'), cont
  * @return {object} 200 - success response - application/json
  * @return {object} 400 - Bad request response
  */
-router.post('/auth/signin', validationMiddleware(userAuthSchema, 'body'), controllerHandler(authController.signin));
+router.post('/auth/signin', sanitizeMiddleware, validationMiddleware(userAuthSchema, 'body'), controllerHandler(authController.signin));
 
 /**
  * POST /auth/reset-password
@@ -66,7 +67,7 @@ router.post('/auth/signin', validationMiddleware(userAuthSchema, 'body'), contro
  * @return {object} 200 - success response - application/json
  * @return {object} 400 - Bad request response
  */
-router.post('/auth/reset-password', validationMiddleware(userResetPassSchema.step1, 'body'), controllerHandler(authController.resetPassword));
+router.post('/auth/reset-password', sanitizeMiddleware, validationMiddleware(userResetPassSchema.step1, 'body'), controllerHandler(authController.resetPassword));
 
 /**
  * POST /auth/reset-password/{userId}/{resetToken}
@@ -83,7 +84,7 @@ router.post('/auth/reset-password', validationMiddleware(userResetPassSchema.ste
  * @return {object} 200 - success response - application/json
  * @return {object} 400 - Bad request response
  */
-router.post('/auth/reset-password/:userId([0-9]+)/:resetToken', validationMiddleware(userResetPassSchema.step2, 'body'), controllerHandler(authController.resetPasswordConfirm));
+router.post('/auth/reset-password/:userId([0-9]+)/:resetToken', sanitizeMiddleware, validationMiddleware(userResetPassSchema.step2, 'body'), controllerHandler(authController.resetPasswordConfirm));
 
 /**
  * POST /auth/verify-recaptcha
@@ -97,7 +98,7 @@ router.post('/auth/reset-password/:userId([0-9]+)/:resetToken', validationMiddle
  * @return {object} 200 - success response - application/json
  * @return {object} 400 - Bad request response
  */
-router.post('/auth/verify-recaptcha', validationMiddleware(userRecaptcha, 'body'), controllerHandler(authController.verifyRecaptcha));
+router.post('/auth/verify-recaptcha', sanitizeMiddleware, validationMiddleware(userRecaptcha, 'body'), controllerHandler(authController.verifyRecaptcha));
 
 /**
  * GET /auth/confirm-signup/{userId}/{confirmToken}
@@ -108,7 +109,7 @@ router.post('/auth/verify-recaptcha', validationMiddleware(userRecaptcha, 'body'
  * @return {object} 200 - success response - application/json
  * @return {object} 400 - Bad request response
  */
-router.get('/auth/confirm-signup/:userId([0-9]+)/:confirmToken', controllerHandler(authController.confirmSignup));
+router.get('/auth/confirm-signup/:userId([0-9]+)/:confirmToken', sanitizeMiddleware, controllerHandler(authController.confirmSignup));
 
 /**
  * GET /auth/generate
@@ -118,7 +119,7 @@ router.get('/auth/confirm-signup/:userId([0-9]+)/:confirmToken', controllerHandl
  * @return {object} 200 - success response - application/json
  * @return {object} 400 - Bad request response
  */
-router.get('/auth/generate', controllerHandler(authController.generate));
+router.get('/auth/generate', sanitizeMiddleware, controllerHandler(authController.generate));
 
 /**
  * GET /auth/tokens
@@ -128,7 +129,7 @@ router.get('/auth/generate', controllerHandler(authController.generate));
  * @return {object} 200 - success response - application/json
  * @return {object} 400 - Bad request response
  */
-router.get('/auth/tokens', controllerHandler(authController.getTokens));
+router.get('/auth/tokens', sanitizeMiddleware, controllerHandler(authController.getTokens));
 
 /**
  * GET /auth/logout
@@ -138,7 +139,7 @@ router.get('/auth/tokens', controllerHandler(authController.getTokens));
  * @return {object} 200 - success response - application/json
  * @return {object} 400 - Bad request response
  */
-router.get('/auth/logout', controllerHandler(authController.logout));
+router.get('/auth/logout', sanitizeMiddleware, controllerHandler(authController.logout));
 
 /**
  * GET /spotify/connect-user
@@ -147,7 +148,7 @@ router.get('/auth/logout', controllerHandler(authController.logout));
  * @return {object} 200 - success response - application/json
  * @return {object} 400 - Bad request response
  */
-router.get('/spotify/connect-user', controllerHandler(spotifyController.connectToSpotify));
+router.get('/spotify/connect-user', sanitizeMiddleware, controllerHandler(spotifyController.connectToSpotify));
 
 /**
  * GET /spotify/callback
@@ -156,7 +157,7 @@ router.get('/spotify/connect-user', controllerHandler(spotifyController.connectT
  * @return {object} 200 - success response - application/json
  * @return {object} 400 - Bad request response
  */
-router.get('/spotify/callback', controllerHandler(spotifyController.callbackSpotify));
+router.get('/spotify/callback', sanitizeMiddleware, controllerHandler(spotifyController.callbackSpotify));
 
 /**
  * GET /spotify/tokens
@@ -165,7 +166,7 @@ router.get('/spotify/callback', controllerHandler(spotifyController.callbackSpot
  * @return {object} 200 - success response - application/json
  * @return {object} 400 - Bad request response
  */
-router.get('/spotify/tokens', controllerHandler(spotifyController.verifySpotifyUserToken));
+router.get('/spotify/tokens', sanitizeMiddleware, controllerHandler(spotifyController.verifySpotifyUserToken));
 
 router.use((_, __, next) => {
   next(new ErrorApi('NOT_FOUND', 'Resource not found', {status: 404}));
