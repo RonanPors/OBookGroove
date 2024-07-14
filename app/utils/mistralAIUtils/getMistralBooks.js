@@ -32,7 +32,5 @@ export async function getMistralBooks(tracks) {
   if(!livres)
     throw new ErrorApi('FAILED_GET_MISTAL_BOOKS', 'Échec de récupération des livres Gemini.', { status: 500 });
 
-  console.log('livres:', livres);
-
   return livres;
 }

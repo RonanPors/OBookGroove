@@ -6,6 +6,7 @@ import {
   collectionShareDatamapper,
 } from '../datamappers/index.datamapper.js';
 import { isoToDate } from '../utils/isoToDate.js';
+import booksGenerator from '../utils/booksGenerator.js';
 
 export default {
 
@@ -81,6 +82,25 @@ export default {
       throw notFoundError(`No current books found.`);
 
     return newBooks;
+  },
+
+  async suggestBooks(_, __, { user, cookies }) {
+
+    if (!user) throw unauthorizedError('Missing authentication.');
+
+    if (!cookies.access_token_spotify)
+      throw unauthorizedError('Token d\'accès Spotify invalide.');
+
+    //! user comporte l'id de l'utilisateur s'il est bien authentifié
+    const suggestBooks = await booksGenerator.init(
+      cookies.access_token_spotify,
+      user,
+    );
+
+    if (!suggestBooks)
+      throw notFoundError('Erreur dans la récupération des suggestions.');
+
+    return suggestBooks;
   },
 
   async surveys({ id }, _, { user }) {
