@@ -11,11 +11,11 @@ export async function getMistralBooks(tracks) {
   const input = `
     Propriété « associations »: suggère un genre littéraire pour chaque musiques:
     ${tracks}
-    Propriété « livres »: propose moi 20 livres en rapport avec le style de genre des musiques.
+    Propriété « books »: propose moi 20 livres en rapport avec le style de genre des musiques.
     Ajoute un « + » à chaque espaces pour les strings.
     Retourne la totalité en un objet JSON sans texte supplémentaire.
     Voici un exemple de format JSON:
-    {"association":[{"track": "musique","artist": "artiste","genre": "genre"}],"livres":[{"titre": "titre","auteur": "auteur","genre": "genre"}]}
+    {"association":[{"track": "musique","artist": "artiste","genre": "genre"}],"books":[{"titre": "titre","auteur": "auteur","genre": "genre"}]}
   `;
 
   // chatResponse.choices[0].message.content
@@ -27,10 +27,10 @@ export async function getMistralBooks(tracks) {
 
   const contentParse = JSON.parse(content);
 
-  const { livres } = changeKeys.camelCase(contentParse, 3);
+  const { books } = changeKeys.camelCase(contentParse, 3);
 
-  if(!livres)
-    throw new ErrorApi('FAILED_GET_MISTAL_BOOKS', 'Échec de récupération des livres Gemini.', { status: 500 });
+  if (!books)
+    throw new ErrorApi('FAILED_GET_MISTAL_BOOKS', 'Échec dans la récupération des livres depuis l\'IA.', { status: 500 });
 
-  return livres;
+  return books;
 }

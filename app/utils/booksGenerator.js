@@ -62,7 +62,7 @@ export default {
       //On récupère les livres de la table book.
       const currentBooks = await Promise.all(
         currentIdBooksUser.map(async book =>
-          await bookDatamapper.findByPk(book.bookId),
+          await bookDatamapper.findByKey('id', book.bookId),
         ),
       );
 
@@ -92,7 +92,7 @@ export default {
     // Boucler sur les 20 livres et vérifier ceux qui ont déjà un isbn en BDD
     // Requête pour récupérer dans un tableau les ISBN avec l'id du book déjà présent dans la table book
     const booksAlreadyPresent = await Promise.all(
-      suggestBooks.map(({ isbn }) => bookDatamapper.findByIsbn(isbn)),
+      suggestBooks.map(({ isbn }) => bookDatamapper.findByKey('isbn', isbn)),
     );
 
     // Filtrer les résultats pour éliminer les valeurs undefined ou null
@@ -127,7 +127,7 @@ export default {
     // S'il existe des associations entre les livres et l'utilisateur actuellement ciblé, supprimer ces livre des 20 livres
     // => Commencer par créer un tableau des livres qui sont en association TRUE avec l'utilisateur
     const booksAlreadyPresentTrue = await Promise.all(
-      filteredUserHasBookAlreadyPresentTrue.map((association) => bookDatamapper.findByPk(association.bookId)),
+      filteredUserHasBookAlreadyPresentTrue.map((association) => bookDatamapper.findByKey('id', association.bookId)),
     );
 
     // Filtrer les résultats pour éliminer les valeurs undefined ou null
@@ -181,7 +181,7 @@ export default {
 
         // Vérifier si le livre existe déjà en bdd
         //! Normalement cette recherche ne sert à rien à ce niveau là
-        let book = await bookDatamapper.findByIsbn(suggest.isbn);
+        let book = await bookDatamapper.findByKey('isbn', suggest.isbn);
 
         // SI le livre n'est pas trouvé en BDD
         // => Créer le livre en BDD
@@ -212,7 +212,7 @@ export default {
         });
 
         // Retourner le livre déjà existant ou nouvellement créé en BDD
-        return await bookDatamapper.findByIsbn(suggest.isbn);
+        return await bookDatamapper.findByKey('isbn', suggest.isbn);
 
       }),
 

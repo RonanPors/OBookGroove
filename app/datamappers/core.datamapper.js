@@ -17,60 +17,18 @@ class CoreDatamapper {
 
   }
 
-  async findByPk(id) {
+  /**
+   * Récupérer un enregistrement à partir d'une clé spécifique
+   * @param {string} key - Chaîne de caractères étant le nom de la colonne cible en respectant la casse
+   * @param {*} value - Valeur associée à la clé pour complèter la condition (where)
+   * @returns {Promise<Object>} - L'objet trouvé suivre à la requête SQL
+   */
+  async findByKey(key, value) {
 
+    //! mettre la valeur de 'key' entre [] va permettre de nommé la propriété comme la valeur de 'key'
+    //! Si 'key' est égak à 'email' (string), [key] sera égal à 'email:'
     const row = await this.client.from(this.tableName)
-      .where({ id })
-      .first();
-
-    const newRow = changeKeys.camelCase(row);
-
-    return newRow;
-
-  }
-
-  async findByEmail(email) {
-
-    const row = await this.client.from(this.tableName)
-      .where({ email })
-      .first();
-
-    const newRow = changeKeys.camelCase(row);
-
-    return newRow;
-
-  }
-
-  async findByPseudo(pseudo) {
-
-    const row = await this.client.from(this.tableName)
-      .where({ pseudo })
-      .first();
-
-    const newRow = changeKeys.camelCase(row);
-
-    return newRow;
-
-  }
-
-  /* Méthode pour recuperer un livre en fonction de son titre */
-  async findByTitle(title) {
-
-    const row = await this.client.from(this.tableName)
-      .where({ title })
-      .first();
-
-    const newRow = changeKeys.camelCase(row);
-
-    return newRow;
-
-  }
-
-  /* Méthode pour récuperer un livre en fonction de son numéro ISBN */
-  async findByIsbn(isbn) {
-
-    const row = await this.client.from(this.tableName)
-      .where({ isbn })
+      .where({ [key]: value })
       .first();
 
     const newRow = changeKeys.camelCase(row);
