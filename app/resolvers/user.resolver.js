@@ -19,7 +19,7 @@ export default {
   // Nous récupérons les enregistrements de la table d'associations
   async books ({ id }, _, { bookLoader }) {
 
-    const books = await userHasBookDatamapper.findByUser(id);
+    const books = await userHasBookDatamapper.findByKey('user_id', id);
 
     const newBooks = await Promise.all(
       books.map((book) => bookLoader.load(book.bookId)),
