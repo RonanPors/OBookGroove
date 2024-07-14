@@ -157,7 +157,7 @@ router.get('/spotify/connect-user', sanitizeMiddleware, controllerHandler(spotif
  * @return {object} 200 - success response - application/json
  * @return {object} 400 - Bad request response
  */
-router.get('/spotify/callback', sanitizeMiddleware, controllerHandler(spotifyController.callbackSpotify));
+router.get('/spotify/callback', sanitizeMiddleware, controllerHandler(spotifyController.callback));
 
 /**
  * GET /spotify/tokens

@@ -89,20 +89,14 @@ export default {
     if (suggestBooks?.length < 10)
       throw new ErrorApi('NO_TOP_TRACKS_FOUND', 'Le retour de Google Books est inférieur à 10 livres.', { status: 404 });
 
-    console.log('1');
-
     // Boucler sur les 20 livres et vérifier ceux qui ont déjà un isbn en BDD
     // Requête pour récupérer dans un tableau les ISBN avec l'id du book déjà présent dans la table book
     const booksAlreadyPresent = await Promise.all(
       suggestBooks.map(({ isbn }) => bookDatamapper.findByIsbn(isbn)),
     );
 
-    console.log('2');
-
     // Filtrer les résultats pour éliminer les valeurs undefined ou null
     const filteredBooksAlreadyPresent = booksAlreadyPresent.filter((book) => book !== undefined || null);
-
-    console.log('3');
 
     // Vérifier l'id des livres trouvés dans la table d'association si ces livres sont lié à l'utilisateur actuellement ciblé
     // Vérifier seulement si le is_active ET/OU is_favorite true
@@ -127,12 +121,8 @@ export default {
 
     }
 
-    console.log('4');
-
     // Filtrer les résultats pour éliminer les valeurs undefined ou null
     const filteredUserHasBookAlreadyPresentTrue = userHasBookAlreadyPresentTrue.filter((association) => association !== undefined || null);
-
-    console.log('5');
 
     // S'il existe des associations entre les livres et l'utilisateur actuellement ciblé, supprimer ces livre des 20 livres
     // => Commencer par créer un tableau des livres qui sont en association TRUE avec l'utilisateur
@@ -140,29 +130,19 @@ export default {
       filteredUserHasBookAlreadyPresentTrue.map((association) => bookDatamapper.findByPk(association.bookId)),
     );
 
-    console.log('6');
-
     // Filtrer les résultats pour éliminer les valeurs undefined ou null
     const filteredBooksAlreadyPresentTrue = booksAlreadyPresentTrue.filter((book) => book !== undefined || null);
-
-    console.log('7');
 
     // => Ensuite, créer un tableau de suggestions qui n'ont pas le même isbn que les livres du tableau ci-dessus
     const existingIsbns = filteredBooksAlreadyPresentTrue.map(book => book.isbn);
     const newSuggestBooks = suggestBooks.filter((book) => !existingIsbns.includes(book.isbn));
 
-    console.log('8');
-
     // Filtrer les résultats pour éliminer les valeurs undefined ou null
     const filteredSuggestBooks = newSuggestBooks.filter((book) => book !== undefined || null);
-
-    console.log('9');
 
     // => Vérifier qu'il y ait au moins 10 livres
     if (filteredSuggestBooks?.length < 10)
       throw new ErrorApi('NO_TOP_TRACKS_FOUND', 'Les suggestions sont inférieur à 10 livres.', { status: 404 });
-
-    console.log('10');
 
     // On en choisi 10 Random.
     //! A refaire au propre plus tard avec une fonction utils
@@ -185,8 +165,6 @@ export default {
       }
 
     }
-
-    console.log('11');
 
     // Pour chacun des 10 livres random :
     // On vérifie dans la table book si le livre existe via son ISBN.
@@ -239,8 +217,6 @@ export default {
       }),
 
     );
-
-    console.log('12');
 
     // Retourner les 10 livres au front.
     return finalSuggestBooks;

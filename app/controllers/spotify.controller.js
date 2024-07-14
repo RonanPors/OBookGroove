@@ -38,7 +38,7 @@ export default {
 
   },
 
-  async callbackSpotify(req, res) {
+  async callback(req, res) {
 
     // Nous utilisons cette methode en réponse de l'API Spotify une fois que l'utilisateur à donné sont authorisation d'exploitation de ces données.
 
@@ -86,7 +86,6 @@ export default {
     res.cookie('refresh_token_spotify', data.refresh_token, { httpOnly: true, secure: false }); //! A passer en secure true en production
 
     // Lancement du service qui retourne 20 livres de l'API GoogleBooks ou de notre BDD.
-    console.log('req.auth:', req.auth);
     const suggestBooks = await booksGenerator.init(data.access_token, req?.auth?.sub);
 
     if (!suggestBooks)
@@ -103,7 +102,7 @@ export default {
       throw new ErrorApi('FAILED_SPOTIFY_AUTH', 'Échec de l\'authentification avec Spotify.', { status: 500 });
 
     // Récupération du refresh token Spotify.
-    const refreshToken = req.cookies.refresh_token;
+    const refreshToken = req.cookies.refresh_token_spotify;
 
     // Préparation de la requête de demande de réinitialisation des tokens Spotify pour notre utilisateur.
     const authOptions = {
