@@ -5,7 +5,7 @@ type Book {
   id: Int!
   isbn: String
   title: String
-  author: String
+  author: [String]
   resume: String
   genre: [String]
   cover: String
