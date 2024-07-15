@@ -168,6 +168,15 @@ router.get('/spotify/callback', sanitizeMiddleware, controllerHandler(spotifyCon
  */
 router.get('/spotify/tokens', sanitizeMiddleware, controllerHandler(spotifyController.verifySpotifyUserToken));
 
+/**
+ * GET /spotify/logout
+ * @summary Supprimer les tokens Spotify d'un utilisateurs
+ * @tags Serveur de mise en relation avec spotifyAPI
+ * @return {object} 200 - success response - application/json
+ * @return {object} 400 - Bad request response
+ */
+router.get('/spotify/logout', sanitizeMiddleware, controllerHandler(spotifyController.logout));
+
 router.use((_, __, next) => {
   next(new ErrorApi('NOT_FOUND', 'Resource not found', {status: 404}));
 });
