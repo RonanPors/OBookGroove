@@ -79,6 +79,7 @@ export default {
   },
 
   async booksRead ({ id }, { limit, offset }, { bookLoader, user }) {
+
     if (!user) throw unauthorizedError('Missing authentication.');
 
     const books = await userHasBookDatamapper.findAll({
