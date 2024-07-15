@@ -4,6 +4,7 @@ import {
   userHasBookDatamapper,
   commentDatamapper,
   collectionDatamapper,
+  collectionShareDatamapper,
   collectionHasBookDatamapper,
 } from '../datamappers/index.datamapper.js';
 import { unauthorizedError, notFoundError } from '../errors/gql.error.js';
@@ -27,7 +28,11 @@ export default {
 
     if (!user) throw unauthorizedError('Missing authentication.');
 
-    const deletedUser = await userDatamapper.delete({ id });
+    const deletedUser = await userDatamapper.delete({
+      where: {
+        id,
+      },
+    });
 
     if (!deletedUser)
       throw notFoundError(`Erreur lors de la suppression de l'utilisateur.`);
@@ -67,8 +72,10 @@ export default {
     if (!user) throw unauthorizedError('Missing authentication.');
 
     const deletedUserHasBook = await userHasBookDatamapper.delete({
-      bookId,
-      userId,
+      where: {
+        bookId,
+        userId,
+      },
     });
 
     if (!deletedUserHasBook)
@@ -121,7 +128,9 @@ export default {
     if (!user) throw unauthorizedError('Missing authentication.');
 
     const deletedSurvey = await surveyDatamapper.delete({
-      id,
+      where: {
+        id,
+      },
     });
 
     if (!deletedSurvey)
@@ -165,8 +174,10 @@ export default {
     if (!user) throw unauthorizedError('Missing authentication.');
 
     const deletedComment = await commentDatamapper.delete({
-      bookId,
-      userId,
+      where: {
+        bookId,
+        userId,
+      },
     });
 
     if (!deletedComment)
@@ -207,13 +218,59 @@ export default {
     if (!user) throw unauthorizedError('Missing authentication.');
 
     const deletedCollection = await collectionDatamapper.delete({
-      id,
+      where: {
+        id,
+      },
     });
 
     if (!deletedCollection)
       throw notFoundError(`Erreur lors de la suppresion de la collection.`);
 
     return deletedCollection;
+
+  },
+
+  async createCollectionShare(_, { input }, { user }) {
+
+    if (!user) throw unauthorizedError('Missing authentication.');
+
+    const createdCollectionShare = await collectionShareDatamapper.create(input);
+
+    if (!createdCollectionShare)
+      throw notFoundError(`Erreur lors de la création du partage de la collection.`);
+
+    return createdCollectionShare;
+
+  },
+
+  async updateCollectionShare(_, { input }, { user }) {
+
+    if (!user) throw unauthorizedError('Missing authentication.');
+
+    const updatedCollectionShare = await collectionShareDatamapper.update(input);
+
+    if (!updatedCollectionShare)
+      throw notFoundError(`Erreur lors de la mise à jour du partage de la collection.`);
+
+    return updatedCollectionShare;
+
+  },
+
+  async deleteCollectionShare(_, { collectionId, userId }, { user }) {
+
+    if (!user) throw unauthorizedError('Missing authentication.');
+
+    const deletedCollectionShare = await collectionShareDatamapper.delete({
+      where: {
+        collectionId,
+        userId,
+      },
+    });
+
+    if (!deletedCollectionShare)
+      throw notFoundError(`Erreur lors de la suppresion du partage de la collection.`);
+
+    return deletedCollectionShare;
 
   },
 
@@ -248,8 +305,10 @@ export default {
     if (!user) throw unauthorizedError('Missing authentication.');
 
     const deletedCollectionHasBook = await collectionHasBookDatamapper.delete({
-      collectionId,
-      bookId,
+      where: {
+        collectionId,
+        bookId,
+      },
     });
 
     if (!deletedCollectionHasBook)

@@ -21,12 +21,12 @@ export default {
       throw new ErrorApi('FAILED_SIGNUP', 'Les deux mots de passe ne sont pas identiques.', {status: 400});
 
     // Vérifier que l'email est unique
-    const emailExist = await userDatamapper.findByEmail(email);
+    const emailExist = await userDatamapper.findByKey('email', email);
     if (emailExist)
       throw new ErrorApi('FAILED_SIGNUP', 'L\'adresse email est dêja existante.', {status: 400});
 
     // Vérifier que le pseudo est unique
-    const pseudoExist = await userDatamapper.findByPseudo(pseudo);
+    const pseudoExist = await userDatamapper.findByKey('pseudo', pseudo);
     if (pseudoExist)
       throw new ErrorApi('FAILED_SIGNUP', 'Le pseudo est dêja existant.', {status: 400});
 
@@ -69,7 +69,7 @@ export default {
     const { email, password } = req.body;
 
     // Vérifier si l'email existe
-    const user = await userDatamapper.findByEmail(email);
+    const user = await userDatamapper.findByKey('email', email);
     if (!user)
       throw new ErrorApi('FAILED_SIGNIN', 'Erreur lors de la connexion.', {status: 400});
 
@@ -168,7 +168,7 @@ export default {
       throw new ErrorApi('FAILED_GENERATE_TOKENS', 'On envoie Reacher ! Cache toi vite...', {status: 498});
 
     // Récupérer l'utilisateur en BDD depuis l'id du token qui est dans sub
-    const user = await userDatamapper.findByPk(decodedAccessToken.claims.sub);
+    const user = await userDatamapper.findByKey('id', decodedAccessToken.claims.sub);
 
     // Vérifier que le refresh token est le même que celui de l'utilisateur en bdd
     // Car les refresh tokens valident mais qui ne sont pas en BDD ne seront pas pris en compte
@@ -252,7 +252,7 @@ export default {
 
     const { email } = req.body;
 
-    const user = await userDatamapper.findByEmail(email);
+    const user = await userDatamapper.findByKey('email', email);
 
     if (!user)
       throw new ErrorApi('FAILED_RESET_PASSWORD', 'L\'adresse email fournie est introuvable.', {status: 400});
@@ -283,7 +283,7 @@ export default {
       throw new ErrorApi('FAILED_RESET_PASSWORD', 'Les deux mots de passe ne sont pas identiques.', {status: 400});
 
     // Vérifier que le token est bien lié à l'userId
-    const user = await userDatamapper.findByPk(userId);
+    const user = await userDatamapper.findByKey('id', userId);
 
     // Si l'utilisateur n'existe pas
     if (!user)
@@ -309,7 +309,7 @@ export default {
 
     const { userId, confirmToken } = req.params;
 
-    const user = await userDatamapper.findByPk(userId);
+    const user = await userDatamapper.findByKey('id', userId);
 
     if (!user)
       throw new ErrorApi('FAILED_CONFIRM_SIGNUP', 'L\'utilisateur est inexistant.', {status: 400});

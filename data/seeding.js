@@ -69,7 +69,7 @@ async function insertBooks() {
     (
         '123AbNcdFD',
         'horry potter',
-        'quelquun',
+        '{ "quelqu''un 1", "quelqu''un 2", "quelqu''un 3" }',
         'resumé de fou',
         '{ "genre1", "genre2", "genre3" }',
         'http://img.fr',
@@ -79,7 +79,7 @@ async function insertBooks() {
     (
       '123AbNcdFD',
       'horry potter',
-      'quelquun',
+      '{ "quelqu''un 1", "quelqu''un 2", "quelqu''un 3" }',
       'resumé de fou',
       '{ "genre1", "genre2", "genre3" }',
       'http://img.fr',
@@ -89,7 +89,77 @@ async function insertBooks() {
     (
       '123AbNcdFD',
       'horry potter',
-      'quelquun',
+      '{ "quelqu''un 1", "quelqu''un 2", "quelqu''un 3" }',
+      'resumé de fou',
+      '{ "genre1", "genre2", "genre3" }',
+      'http://img.fr',
+      '2024',
+      '12'
+    ),
+    (
+      '123AbNcdFD',
+      'horry potter',
+      '{ "quelqu''un 1", "quelqu''un 2", "quelqu''un 3" }',
+      'resumé de fou',
+      '{ "genre1", "genre2", "genre3" }',
+      'http://img.fr',
+      '2024',
+      '12'
+    ),
+    (
+      '123AbNcdFD',
+      'horry potter',
+      '{ "quelqu''un 1", "quelqu''un 2", "quelqu''un 3" }',
+      'resumé de fou',
+      '{ "genre1", "genre2", "genre3" }',
+      'http://img.fr',
+      '2024',
+      '12'
+    ),
+    (
+      '123AbNcdFD',
+      'horry potter',
+      '{ "quelqu''un 1", "quelqu''un 2", "quelqu''un 3" }',
+      'resumé de fou',
+      '{ "genre1", "genre2", "genre3" }',
+      'http://img.fr',
+      '2024',
+      '12'
+    ),
+    (
+      '123AbNcdFD',
+      'horry potter',
+      '{ "quelqu''un 1", "quelqu''un 2", "quelqu''un 3" }',
+      'resumé de fou',
+      '{ "genre1", "genre2", "genre3" }',
+      'http://img.fr',
+      '2024',
+      '12'
+    ),
+    (
+      '123AbNcdFD',
+      'horry potter',
+      '{ "quelqu''un 1", "quelqu''un 2", "quelqu''un 3" }',
+      'resumé de fou',
+      '{ "genre1", "genre2", "genre3" }',
+      'http://img.fr',
+      '2024',
+      '12'
+    ),
+    (
+      '123AbNcdFD',
+      'horry potter',
+      '{ "quelqu''un 1", "quelqu''un 2", "quelqu''un 3" }',
+      'resumé de fou',
+      '{ "genre1", "genre2", "genre3" }',
+      'http://img.fr',
+      '2024',
+      '12'
+    ),
+    (
+      '123AbNcdFD',
+      'horry potter',
+      '{ "quelqu''un 1", "quelqu''un 2", "quelqu''un 3" }',
       'resumé de fou',
       '{ "genre1", "genre2", "genre3" }',
       'http://img.fr',
@@ -115,31 +185,34 @@ async function insertUserHasBook() {
     )
     VALUES
     (
-      1, 2, 1
-    ),
-    (
-      1, 3, 1
-    ),
-    (
       1, 1, 1
-    ),
-    (
-      2, 3, 1
     ),
     (
       2, 1, 1
     ),
     (
-      2, 2, 1
-    ),
-    (
       3, 1, 1
     ),
     (
-      3, 2, 1
+      4, 1, 1
     ),
     (
-      3, 3, 1
+      5, 1, 1
+    ),
+    (
+      6, 1, 1
+    ),
+    (
+      7, 1, 1
+    ),
+    (
+      8, 1, 1
+    ),
+    (
+      9, 1, 1
+    ),
+    (
+      10, 1, 1
     )
     RETURNING id
   `;
@@ -292,6 +365,32 @@ async function insertCollectionHasBook() {
   return result.rows;
 }
 
+async function insertCollectionShares() {
+  await pool.query('TRUNCATE TABLE "collection_share" RESTART IDENTITY CASCADE');
+
+  const queryStr = `
+    INSERT INTO "collection_share"
+    (
+      "collection_id",
+      "user_id"
+    )
+    VALUES
+    (
+      1, 1
+    ),
+    (
+      1, 2
+    ),
+    (
+      1, 3
+    )
+    RETURNING id
+  `;
+
+  const result = await pool.query(queryStr);
+  return result.rows;
+}
+
 (async () => {
 
   /**
@@ -335,6 +434,12 @@ async function insertCollectionHasBook() {
     */
   const insertedCollectionHasBook = await insertCollectionHasBook();
   console.log(`${insertedCollectionHasBook.length} CollectionHasBook inserted`);
+
+  /**
+    * Ajout des partages de collections en BDD
+    */
+  const insertedCollectionShares = await insertCollectionShares();
+  console.log(`${insertedCollectionShares.length} CollectionShares inserted`);
 
   pool.end();
 })();

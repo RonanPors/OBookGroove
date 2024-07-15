@@ -5,7 +5,7 @@ export default {
 
   async user(_, { id }) {
 
-    const user = await userDatamapper.findByPk(id);
+    const user = await userDatamapper.findByKey('id', id);
 
     if (!user) throw notFoundError(`No User found with id ${id}.`);
 
@@ -24,7 +24,7 @@ export default {
 
   async book(_, { id }) {
 
-    const book = await bookDatamapper.findByPk(id);
+    const book = await bookDatamapper.findByKey('id', id);
 
     if (!book) throw notFoundError(`No Book found with id ${id}.`);
 
