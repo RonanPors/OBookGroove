@@ -103,6 +103,33 @@ export default {
     return suggestBooks;
   },
 
+  async booksRead ({ id }, { limit, offset }, { bookLoader, user }) {
+
+    if (!user) throw unauthorizedError('Missing authentication.');
+
+    const books = await userHasBookDatamapper.findAll({
+      limit,
+      offset,
+      where: {
+        userId: id,
+        isRead: true,
+      },
+      order: {
+        column: 'updated_at',
+        direction: 'desc',
+      },
+    });
+
+    const newBooks = await Promise.all(
+      books.map((book) => bookLoader.load(book.bookId)),
+    );
+
+    if (!newBooks || !books)
+      throw notFoundError(`No books yet read.`);
+
+    return newBooks;
+  },
+
   async surveys({ id }, _, { user }) {
 
     if (!user) throw unauthorizedError('Missing authentication.');
