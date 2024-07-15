@@ -20,7 +20,7 @@ export default {
     });
 
     const books = await Promise.all(
-      collectionHasBooks.map(({ bookId }) => bookDatamapper.findByPk(bookId)),
+      collectionHasBooks.map(({ bookId }) => bookDatamapper.findByKey('id', bookId)),
     );
 
     if (!collectionHasBooks || !books)

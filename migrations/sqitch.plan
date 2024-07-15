@@ -9,3 +9,5 @@
 06_crud_functions_comment_table 2024-07-10T17:02:32Z Etudiant O'clock <student@teleporter> # add crud functions for comment table in bdd
 07_collection_tables 2024-07-10T19:26:51Z Etudiant O'clock <student@teleporter> # add collection tables in bdd
 08_crud_functions_collection_tables 2024-07-10T19:36:21Z Etudiant O'clock <student@teleporter> # add crud functions for collection tables in bdd
+09_collection_share_table 2024-07-13T12:35:52Z Etudiant O'clock <student@teleporter> # add collection share table in bdd
+10_crud_functions_collection_share_table 2024-07-13T12:42:31Z Etudiant O'clock <student@teleporter> # add crud functions for collection_share table in bdd

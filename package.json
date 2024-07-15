@@ -14,6 +14,8 @@
   "license": "ISC",
   "dependencies": {
     "@apollo/server": "^4.10.4",
+    "@mistralai/mistralai": "^0.5.0",
+    "axios": "^1.7.2",
     "bcrypt": "^5.1.1",
     "change-case": "^5.4.4",
     "cookie-parser": "^1.4.6",
@@ -30,7 +32,8 @@
     "knex": "^3.1.0",
     "nodemailer": "^6.9.14",
     "pg": "^8.12.0",
-    "pino-http": "^10.1.0"
+    "pino-http": "^10.1.0",
+    "sanitize-html": "^2.13.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.5.0",
