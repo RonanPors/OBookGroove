@@ -9,7 +9,7 @@ export default (err, req, res, next) => {
     cause: err.causeObj,
   };
 
-  //Gestion des erreurs de validation JOI
+  //Gestion des erreurs de validation JOI.
   if(name === 'ValidationError'){
     return res.status(400).json({error: {
       ...templateError,
@@ -18,14 +18,25 @@ export default (err, req, res, next) => {
     }});
   }
 
-  //Gestion des erreurs personnalisées
+  //Gestion des erreurs d'authentification Spotify.
+  if(name === 'FAILED_SPOTIFY_AUTH' || name === 'FAILED_BOOKS_SUGGEST'){
+    // On supprime en cookies les tokens Spotify de l'utilisateur.
+    res.clearCookie('access_token_spotify');
+    res.clearCookie('refresh_token_spotify');
+
+    return res.status(err.status).json({error: {
+      ...templateError,
+    }});
+  }
+
+  //Gestion des erreurs personnalisées.
   if(status){
     return res.status(err.status).json({error: {
       ...templateError,
     }});
   }
 
-  //Si aucune erreur trouvée
+  //Si aucune erreur trouvée.
   if (!status) {
     err.status = 500;
   }
