@@ -68,12 +68,14 @@ CREATE FUNCTION "insert_user_has_book"(json) RETURNS "user_has_book" AS $$
     "user_id",
     "is_active",
     "is_favorite",
+    "is_read",
     "note"
   ) VALUES (
     ($1->>'book_id')::INT,
     ($1->>'user_id')::INT,
     COALESCE(($1->>'is_active')::BOOLEAN, TRUE),
     COALESCE(($1->>'is_favorite')::BOOLEAN, FALSE),
+    COALESCE(($1->>'is_read')::BOOLEAN, FALSE),
     ($1->>'note')::INT
   ) RETURNING *
 
