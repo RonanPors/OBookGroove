@@ -78,7 +78,7 @@ export default {
     return newBooks;
   },
 
-  async bookIsBlacklisted({ id }, { limit, offset }, { bookLoader, user }) {
+  async blacklistBooks({ id }, { limit, offset }, { bookLoader, user }) {
 
     if (!user) throw unauthorizedError('Missing authentication.');
 
@@ -90,8 +90,8 @@ export default {
         isBlacklisted: true,
       },
       order: {
-        column: 'updated_at', // A confirmer que c'est le bon critere
-        direction: 'desc', // Idem, a confirmer
+        column: 'updated_at',
+        direction: 'desc',
       },
     });
 
@@ -103,6 +103,7 @@ export default {
       throw notFoundError(`No current books found.`);
 
     return newBooks;
+
   },
 
   async surveys({ id }, _, { user }) {
