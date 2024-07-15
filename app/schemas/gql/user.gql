@@ -18,6 +18,7 @@ type User {
 	favoriteBooks(limit: Int, offset: Int): [Book]!
 	currentBooks(limit: Int, offset: Int): [Book]!
 	booksRead(limit: Int, offset: Int): [Book]!
+  blacklistBooks(limit: Int, offset: Int): [Book]!
   suggestBooks: [Book]!
 
   surveys: [Survey]!

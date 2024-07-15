@@ -39,6 +39,7 @@ CREATE TABLE "user_has_book" (
     "is_active" BOOLEAN NOT NULL DEFAULT true,
     "is_favorite" BOOLEAN NOT NULL DEFAULT false,
     "is_read" BOOLEAN NOT NULL DEFAULT false,
+    "is_blacklisted" BOOLEAN NOT NULL DEFAULT false,
     "note" INT,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
     "updated_at" TIMESTAMPTZ

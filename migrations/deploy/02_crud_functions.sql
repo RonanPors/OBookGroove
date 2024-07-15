@@ -70,6 +70,7 @@ CREATE FUNCTION "insert_user_has_book"(json) RETURNS "user_has_book" AS $$
     "is_active",
     "is_favorite",
     "is_read",
+    "is_blacklisted",
     "note"
   ) VALUES (
     ($1->>'book_id')::INT,
@@ -77,6 +78,7 @@ CREATE FUNCTION "insert_user_has_book"(json) RETURNS "user_has_book" AS $$
     COALESCE(($1->>'is_active')::BOOLEAN, TRUE),
     COALESCE(($1->>'is_favorite')::BOOLEAN, FALSE),
     COALESCE(($1->>'is_read')::BOOLEAN, FALSE),
+    COALESCE(($1->>'is_blacklisted')::BOOLEAN, FALSE),
     ($1->>'note')::INT
   ) RETURNING *
 
@@ -133,6 +135,7 @@ CREATE FUNCTION "update_user_has_book"(json) RETURNS "user_has_book" AS $$
     "is_active" = COALESCE(($1->>'is_active')::BOOLEAN, "is_active"),
     "is_favorite" = COALESCE(($1->>'is_favorite')::BOOLEAN, "is_favorite"),
     "is_read" = COALESCE(($1->>'is_read')::BOOLEAN, "is_read"),
+    "is_blacklisted" = COALESCE(($1->>'is_blacklisted')::BOOLEAN, "is_blacklisted"),
     "note" = COALESCE(($1->>'note')::INT, "note"),
     "updated_at" = now()
   WHERE "book_id" = ($1->>'book_id')::INT AND "user_id" = ($1->>'user_id')::INT
