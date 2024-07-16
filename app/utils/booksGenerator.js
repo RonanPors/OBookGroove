@@ -19,14 +19,14 @@ export default {
       },
     });
 
-    if (books.length <= 0)
-      throw new ErrorApi('NO_ACTIVE_BOOKS_FOUND', 'Aucun livre actif trouvé pour l\'utilisateur.', { status: 404 });
+    if (books.length > 0) {
+      //On met à jour les livres actifs qui sont inférieurs ou égaux à la date actuelle -7 jours.
+      const updateBooksConfirm = updateActiveBooks(books, userId);
 
-    //On met à jour les livres actifs qui sont inférieurs ou égaux à la date actuelle -7 jours.
-    const updateBooksConfirm = updateActiveBooks(books, userId);
+      if (!updateBooksConfirm)
+        throw new ErrorApi('FAILED_UPDATE_ACTIVE_BOOKS', 'Échec de mise à jour des livres actifs.', { status: 500 });
+    }
 
-    if (!updateBooksConfirm)
-      throw new ErrorApi('FAILED_UPDATE_ACTIVE_BOOKS', 'Échec de mise à jour des livres actifs.', { status: 500 });
 
     // Supprimer toutes les associations de la BDD qui sont en is_active false ET is_favorite false
     await userHasBookDatamapper.delete({
@@ -44,8 +44,8 @@ export default {
       },
     });
 
-    //Si il y a 200 livres actifs, on récupère les 10 dernier livres actifs et on les retourne au front avec un message pour informer l'utilisateur qu'il a atteind sa limite de requêtes autorisées.
-    if (newDataBooksUser.length >= 200) {
+    //Si il y a 10 livres actifs, on récupère les 10 derniers livres actifs et on les retourne au front avec un message pour informer l'utilisateur qu'il a atteint sa limite de requêtes autorisées.
+    if (newDataBooksUser.length >= 10) {
       //!Attention on ne récupère que les id des livres de l'utilisateur dans currentIdBooksUser.
       const currentIdBooksUser = await userHasBookDatamapper.findAll({
         limit: 10,
