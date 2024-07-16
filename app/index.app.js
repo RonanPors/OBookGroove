@@ -52,7 +52,7 @@ async function getContext({ req }) {
   const context = { userLoader, bookLoader };
 
   // Si l'utilisateur a été authentifié par le auth MW, le context sera mis au courant
-  if (req.auth) context.user = req.auth.claims.sub;
+  if (req.auth) context.user = req.auth.sub;
 
   if (req.cookies) context.cookies = req.cookies;
 
