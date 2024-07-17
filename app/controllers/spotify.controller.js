@@ -30,7 +30,7 @@ export default {
       state: stateKey,
       show_dialog: true,
     };
-
+   
     // On retourne l'URL contenant les proprietés attendues par l'API spotify en paramètres.
     return res.json({
       uri: spotifyAuthUrl + queryString.stringify(params),
