@@ -61,9 +61,16 @@ export default {
 
       //On récupère les livres de la table book.
       const currentBooks = await Promise.all(
-        currentIdBooksUser.map(async book =>
-          await bookDatamapper.findByKey('id', book.bookId),
-        ),
+        currentIdBooksUser.map(async book => {
+
+          const newBook = await bookDatamapper.findByKey('id', book.bookId);
+
+          return {
+            ...newBook,
+            isFavorite: book.isFavorite,
+          };
+
+        }),
       );
 
       // Retourner les 10 livres de l'utilisateur.
