@@ -75,7 +75,16 @@ export default {
     });
 
     const newBooks = await Promise.all(
-      books.map((book) => bookLoader.load(book.bookId)),
+      books.map(async (book) => {
+
+        const newBook = await bookLoader.load(book.bookId);
+
+        return {
+          ...newBook,
+          isFavorite: book.isFavorite,
+        };
+
+      }),
     );
 
     if (!newBooks || !books)
