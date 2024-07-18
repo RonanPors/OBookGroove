@@ -218,8 +218,13 @@ export default {
           isFavorite: false,
         });
 
+        const newBook = await bookDatamapper.findByKey('isbn', suggest.isbn);
+
         // Retourner le livre déjà existant ou nouvellement créé en BDD
-        return await bookDatamapper.findByKey('isbn', suggest.isbn);
+        return {
+          ...newBook,
+          isFavorite: false,
+        };
 
       }),
 
