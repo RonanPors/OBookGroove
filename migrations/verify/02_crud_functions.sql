@@ -20,7 +20,7 @@ WHERE
 
 SELECT *
 FROM insert_user_has_book (
-        '{"book_id": 1, "user_id": 1, "is_active": true, "is_favorite": false}'::json
+        '{"book_id": 1, "user_id": 1, "is_active": true, "is_favorite": false, "is_read": false, "is_blacklisted": false, note: 1 }'::json
     )
 WHERE
     false;

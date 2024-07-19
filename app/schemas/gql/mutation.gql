@@ -1,0 +1,32 @@
+type Mutation {
+  updateUser(input: UpdateUserInput): User
+  deleteUser(id: Int!): [User]!
+
+  createUserHasBook(input: UserHasBookInputCreate): UserHasBook
+  updateUserHasBook(input: UserHasBookInputUpdate): UserHasBook
+  deleteUserHasBook(bookId: Int!, userId: Int!): [UserHasBook]!
+
+  createSurvey(input: SurveyInputCreate): Survey
+  # Attention, l'update nécéssite le renvoi de tout le formulaire mis à jour
+  updateSurvey(input: SurveyInputUpdate): Survey
+  # Ici, il faut l'id du survey car le user_id sera associé à plusieurs surveys éventuellement
+  deleteSurvey(id: Int!): [Survey]!
+
+  createComment(input: CommentInputCreate): Comment
+  updateComment(input: CommentInputUpdate): Comment
+  deleteComment(bookId: Int!, userId: Int!): [Comment]!
+
+  createCollection(input: CollectionInputCreate): Collection
+  updateCollection(input: CollectionInputUpdate): Collection
+  deleteCollection(id: Int!): [Collection]!
+
+  createCollectionShare(input: CollectionShareInputCreate): CollectionShare
+  updateCollectionShare(input: CollectionShareInputUpdate): CollectionShare
+  deleteCollectionShare(collectionId: Int!, userId: Int!): [CollectionShare]!
+
+  createCollectionHasBook(input: CollectionHasBookInputCreate): CollectionHasBook
+  # L'update ne sert strictement à rien pour l'instant
+  updateCollectionHasBook(input: CollectionHasBookInputUpdate): CollectionHasBook
+  deleteCollectionHasBook(collectionId: Int!, bookId: Int!): [CollectionHasBook]!
+
+}

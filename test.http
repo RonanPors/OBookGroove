@@ -32,3 +32,7 @@ Content-Type: application/json
 ### Test gestion d'erreur sur URL
 GET {{endpoint}}/auth/truc
 Content-Type: application/json
+
+### Test Spotify
+GET {{endpoint}}/spotify/connect-user
+Content-Type: application/json

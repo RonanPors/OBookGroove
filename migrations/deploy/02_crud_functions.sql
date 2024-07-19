@@ -1,3 +1,4 @@
+-- SQLBook: Code
 -- Deploy obookgroove:02_crud_functions to pg
 
 BEGIN;
@@ -21,7 +22,7 @@ CREATE FUNCTION "insert_user"(json) RETURNS "user" AS $$
     $1->>'pseudo',
     $1->>'email',
     $1->>'password',
-    ($1->>'is_active')::BOOLEAN,
+    COALESCE(($1->>'is_active')::BOOLEAN, FALSE),
     $1->>'refresh_token',
     $1->>'reset_token',
     $1->>'confirm_token',
@@ -48,12 +49,12 @@ CREATE FUNCTION "insert_book"(json) RETURNS "book" AS $$
   ) VALUES (
     $1->>'isbn',
     $1->>'title',
-    $1->>'author',
-    $1->>'resume',
-    ($1->>'genre')::TEXT[],
-    $1->>'cover',
-    ($1->>'year')::INT,
-    ($1->>'number_of_pages')::INT
+    string_to_array($1->>'author', ',')::TEXT[],
+    COALESCE($1->>'resume', NULL),
+    string_to_array($1->>'genre', ',')::TEXT[],
+    COALESCE($1->>'cover', NULL),
+    COALESCE(($1->>'year')::INT, NULL),
+    COALESCE(($1->>'number_of_pages')::INT, NULL)
   ) RETURNING *
 
 $$ LANGUAGE sql
@@ -67,12 +68,18 @@ CREATE FUNCTION "insert_user_has_book"(json) RETURNS "user_has_book" AS $$
     "book_id",
     "user_id",
     "is_active",
-    "is_favorite"
+    "is_favorite",
+    "is_read",
+    "is_blacklisted",
+    "note"
   ) VALUES (
     ($1->>'book_id')::INT,
     ($1->>'user_id')::INT,
-    ($1->>'is_active')::BOOLEAN,
-    ($1->>'is_favorite')::BOOLEAN
+    COALESCE(($1->>'is_active')::BOOLEAN, TRUE),
+    COALESCE(($1->>'is_favorite')::BOOLEAN, FALSE),
+    COALESCE(($1->>'is_read')::BOOLEAN, FALSE),
+    COALESCE(($1->>'is_blacklisted')::BOOLEAN, FALSE),
+    ($1->>'note')::INT
   ) RETURNING *
 
 $$ LANGUAGE sql
@@ -107,7 +114,7 @@ CREATE FUNCTION "update_book"(json) RETURNS "book" AS $$
   UPDATE "book" SET
     "isbn" = COALESCE($1->>'isbn', "isbn"),
     "title" = COALESCE($1->>'title', "title"),
-    "author" = COALESCE($1->>'author', "author"),
+    "author" = COALESCE(($1->>'author')::TEXT[], "author"),
     "resume" = COALESCE($1->>'resume', "resume"),
     "genre" = COALESCE(($1->>'genre')::TEXT[], "genre"),
     "cover" = COALESCE($1->>'cover', "cover"),
@@ -125,12 +132,13 @@ VOLATILE STRICT;
 CREATE FUNCTION "update_user_has_book"(json) RETURNS "user_has_book" AS $$
 
   UPDATE "user_has_book" SET
-    "book_id" = COALESCE(($1->>'book_id')::INT, "book_id"),
-    "user_id" = COALESCE(($1->>'user_id')::INT, "user_id"),
     "is_active" = COALESCE(($1->>'is_active')::BOOLEAN, "is_active"),
     "is_favorite" = COALESCE(($1->>'is_favorite')::BOOLEAN, "is_favorite"),
+    "is_read" = COALESCE(($1->>'is_read')::BOOLEAN, "is_read"),
+    "is_blacklisted" = COALESCE(($1->>'is_blacklisted')::BOOLEAN, "is_blacklisted"),
+    "note" = COALESCE(($1->>'note')::INT, "note"),
     "updated_at" = now()
-  WHERE "id" = ($1->>'id')::INT
+  WHERE "book_id" = ($1->>'book_id')::INT AND "user_id" = ($1->>'user_id')::INT
   RETURNING *
 
 $$ LANGUAGE sql
