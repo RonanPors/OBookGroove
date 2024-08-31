@@ -1,6 +1,7 @@
 import {
   surveyDatamapper,
   userDatamapper,
+  bookDatamapper,
   userHasBookDatamapper,
   commentDatamapper,
   collectionDatamapper,
@@ -39,6 +40,34 @@ export default {
 
     return deletedUser;
 
+  },
+
+  async updateBook(_, { input }, { user }) {
+
+    if (!user) throw unauthorizedError('Missing authentication.');
+
+    const updatedBook = await bookDatamapper.update(input);
+
+    if (!updatedBook)
+      throw notFoundError(`Erreur lors de la mise à jour du livre.`);
+    console.log(updatedBook);
+
+    return updatedBook;
+  },
+
+  async deleteBook(_, { id }, { user }) {
+
+    if (!user) throw unauthorizedError('Missing authentication.');
+
+    const deletedBook = await bookDatamapper.delete({
+      where: {
+        id,
+      },
+    });
+    if (!deletedBook)
+      throw notFoundError(`Erreur lors de la suppression du livre.`);
+
+    return deletedBook;
   },
 
   async createUserHasBook(_, { input }, { user }) {

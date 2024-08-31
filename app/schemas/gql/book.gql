@@ -1,5 +1,4 @@
 type Book {
-
   # Le '!' ne signifi pas qu'il est obligatoire de récupérer l'id
   #  ça signifi que l'id récupéré doit forcément être du bon type et non pas null
   id: Int!
@@ -15,15 +14,24 @@ type Book {
 
   users: [User]!
   comments(limit: Int, offset: Int): [Comment]!
+}
 
+input UpdateBookInput {
+  id: Int!
+  isbn: String
+  title: String
+  author: [String]
+  resume: String
+  genre: [String]
+  cover: String
+  year: Int
+  numberOfPages: Int
 }
 
 type BookSubList {
+  # Il est impératif que l'objet items contienne un tableau lui même contenant au minimum un objet Book
+  items: [Book!]!
 
-	# Il est impératif que l'objet items contienne un tableau lui même contenant au minimum un objet Book
-	items: [Book!]!
-
-	# totalCount ne peut être NULL
-	totalCount: Int!
- 
+  # totalCount ne peut être NULL
+  totalCount: Int!
 }

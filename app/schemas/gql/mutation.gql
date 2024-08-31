@@ -2,6 +2,9 @@ type Mutation {
   updateUser(input: UpdateUserInput): User
   deleteUser(id: Int!): [User]!
 
+  updateBook(input: UpdateBookInput): Book
+  deleteBook(id: Int!): [Book]!
+
   createUserHasBook(input: UserHasBookInputCreate): UserHasBook
   updateUserHasBook(input: UserHasBookInputUpdate): UserHasBook
   deleteUserHasBook(bookId: Int!, userId: Int!): [UserHasBook]!
@@ -24,9 +27,15 @@ type Mutation {
   updateCollectionShare(input: CollectionShareInputUpdate): CollectionShare
   deleteCollectionShare(collectionId: Int!, userId: Int!): [CollectionShare]!
 
-  createCollectionHasBook(input: CollectionHasBookInputCreate): CollectionHasBook
+  createCollectionHasBook(
+    input: CollectionHasBookInputCreate
+  ): CollectionHasBook
   # L'update ne sert strictement à rien pour l'instant
-  updateCollectionHasBook(input: CollectionHasBookInputUpdate): CollectionHasBook
-  deleteCollectionHasBook(collectionId: Int!, bookId: Int!): [CollectionHasBook]!
-
+  updateCollectionHasBook(
+    input: CollectionHasBookInputUpdate
+  ): CollectionHasBook
+  deleteCollectionHasBook(
+    collectionId: Int!
+    bookId: Int!
+  ): [CollectionHasBook]!
 }

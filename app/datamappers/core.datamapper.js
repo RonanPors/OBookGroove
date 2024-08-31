@@ -37,6 +37,11 @@ class CoreDatamapper {
 
   }
 
+  /**
+   * Récupérer tous les enregistrements avec des conditions facultatives
+   * @param {Object} params - Paramètres optionnels pour filtrer, trier et limiter les résultats
+   * @returns {Promise<Array<Object>>} - Liste des objets trouvés
+   */
   async findAll(params) {
 
     // Transformation du where en snake_case
@@ -44,9 +49,18 @@ class CoreDatamapper {
     const orWhere = changeKeys.snakeCase(params?.orWhere);
     const andWhere = changeKeys.snakeCase(params?.andWhere);
 
-    const query = this.client.from(this.tableName);
+    const query = this.client.from(this.tableName)
+      .modify(queryBuild => {
+        if (where) queryBuild.where(where);
+        if (orWhere) queryBuild.orWhere(orWhere);
+        if (andWhere) queryBuild.andWhere(andWhere);
+        if (params?.limit) queryBuild.limit(params.limit);
+        if (params?.offset) queryBuild.offset(params.offset);
+        if (params?.order) queryBuild.orderBy(params.order.column, params.order.direction);
+      });
 
-    if (where) query.where(where);
+
+    /*     if (where) query.where(where);
 
     if (orWhere) query.orWhere(orWhere);
 
@@ -59,7 +73,7 @@ class CoreDatamapper {
     if (params?.order) query.orderBy(
       params.order.column,
       params.order.direction,
-    );
+    ); */
 
     const rows = await query;
 
@@ -69,6 +83,11 @@ class CoreDatamapper {
 
   }
 
+  /**
+   * Insérer un nouvel enregistrement dans la base de données
+   * @param {Object} inputData - Données à insérer
+   * @returns {Promise<Object>} - L'objet inséré avec ses propriétés générées
+   */
   async create(inputData) {
 
     const newInputData = changeKeys.snakeCase(inputData);

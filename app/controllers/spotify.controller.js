@@ -30,7 +30,7 @@ export default {
       state: stateKey,
       show_dialog: true,
     };
-   
+
     // On retourne l'URL contenant les proprietés attendues par l'API spotify en paramètres.
     return res.json({
       uri: spotifyAuthUrl + queryString.stringify(params),
@@ -76,6 +76,7 @@ export default {
 
     // Récupération des tokens Spotify de notre utilisateur.
     const data = await response.json();
+
 
     // Vérification de l'existante des tokens Spotify.
     if (!data.refresh_token || !data.access_token)

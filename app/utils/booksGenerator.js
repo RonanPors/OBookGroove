@@ -85,6 +85,7 @@ export default {
 
     // Utilisation de Mistral AI pour récupérer des titres et auteurs de livres sur la base des musiques:
     const mistralBooks = await getMistralBooks(tracks);
+    console.log(mistralBooks);
 
     // Récupérer 10 livres des titre retournées par Mistral depuis l'API Google Books
     //! Utiliser plutôt les titres et les auteurs fournis par Mistral AI

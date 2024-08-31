@@ -37,8 +37,8 @@ async function insertUsers() {
         'refresh_token'
     ), -- Antestdefou3*
     (
-        'Ronane',
-        'ronane@oclock.io',
+        'Ronan',
+        'ronan@oclock.io',
         '$2b$12$bZaufSjg9KLuV9b0qqt6/.Uo97.uHF95k2TYQnZDDK8eLOfzXq.2i',
         'true',
         'refresh_token'
