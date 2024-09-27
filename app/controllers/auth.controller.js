@@ -56,7 +56,21 @@ export default {
 
     // Envoi du mail de confirmation d'inscription
     const subject = "Confirmation d'inscription - O'BookGroove";
-    const html = `${process.env.BASE_URL_CLIENT}/confirm-signup/${user.id}/${confirmToken}`;
+    const confirmationUrl = `${process.env.BASE_URL_CLIENT}/confirm-signup/${user.id}/${confirmToken}`;
+    const html = `
+  <div style="font-family: Arial, sans-serif; color: #333;">
+    <h1 style="color: #5c6bc0;">Bienvenue sur O'BookGroove, ${pseudo} !</h1>
+    <p>Merci de vous être inscrit. Pour finaliser votre inscription et activer votre compte, veuillez cliquer sur le lien ci-dessous :</p>
+    <a href="${confirmationUrl}" style="background-color: #5c6bc0; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Confirmer mon inscription</a>
+    <p>Ou copiez-collez ce lien dans votre navigateur :</p>
+    <p><a href="${confirmationUrl}">${confirmationUrl}</a></p>
+    <p>Si vous n'avez pas demandé cette inscription, veuillez ignorer cet email.</p>
+    <p>Merci,</p>
+    <p>L'équipe O'BookGroove</p>
+  </div>
+`;
+
+
     sendEmail(email, subject, html);
 
     // Retourner les deux tokens ici

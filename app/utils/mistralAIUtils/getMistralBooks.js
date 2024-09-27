@@ -13,7 +13,7 @@ export async function getMistralBooks(tracks) {
     ${tracks}
     Propriété « books »: propose moi 20 livres en rapport avec le style de genre des musiques.
     Ajoute un « + » à chaque espaces pour les strings.
-    Retourne la totalité en générant une sortie JSON sous ce format :
+    Retourne la totalité en générant uniquement une sortie JSON sous ce format :
     {"association":[{"track": "musique","artist": "artiste","genre": "genre"}],"books":[{"titre": "titre","auteur": "auteur","genre": "genre"}]}
   `;
 
