@@ -45,7 +45,7 @@ export default {
     });
 
     //Si il y a 10 livres actifs, on récupère les 10 derniers livres actifs et on les retourne au front avec un message pour informer l'utilisateur qu'il a atteint sa limite de requêtes autorisées.
-    if (newDataBooksUser.length >= 10) {
+    if (newDataBooksUser.length >= 60) {
       //!Attention on ne récupère que les id des livres de l'utilisateur dans currentIdBooksUser.
       const currentIdBooksUser = await userHasBookDatamapper.findAll({
         limit: 10,
@@ -85,6 +85,7 @@ export default {
 
     // Utilisation de Mistral AI pour récupérer des titres et auteurs de livres sur la base des musiques:
     const mistralBooks = await getMistralBooks(tracks);
+    console.log(mistralBooks);
 
     // Récupérer 10 livres des titre retournées par Mistral depuis l'API Google Books
     //! Utiliser plutôt les titres et les auteurs fournis par Mistral AI

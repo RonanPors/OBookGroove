@@ -145,4 +145,7 @@ $$ LANGUAGE sql
 
 VOLATILE STRICT;
 
+ALTER TABLE "book"
+ADD CONSTRAINT check_year CHECK ("year" > 0 AND "year" <= extract("year" from now())); -- Vérifie que l'année est positive et pas dans le futur
+
 COMMIT;

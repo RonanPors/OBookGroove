@@ -53,7 +53,7 @@ export default {
 
         return {
           ...newBook,
-          isFavorite: true,
+          isFavorite: book.isFavorite,
         };
 
       }),

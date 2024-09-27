@@ -30,7 +30,7 @@ export default {
       state: stateKey,
       show_dialog: true,
     };
-   
+
     // On retourne l'URL contenant les proprietés attendues par l'API spotify en paramètres.
     return res.json({
       uri: spotifyAuthUrl + queryString.stringify(params),
@@ -76,6 +76,7 @@ export default {
 
     // Récupération des tokens Spotify de notre utilisateur.
     const data = await response.json();
+
 
     // Vérification de l'existante des tokens Spotify.
     if (!data.refresh_token || !data.access_token)
@@ -137,8 +138,8 @@ export default {
   async logout(req, res) {
 
     // Fonction qui vérifie la présence des tokens spotify.
-    if (!req.cookies['refresh_token_spotify'] || !req.cookies['access_token_spotify'])
-      throw new ErrorApi('FAILED_SPOTIFY_AUTH', 'Échec de l\'authentification avec Spotify.', { status: 500 });
+    // if (!req.cookies['refresh_token_spotify'] || !req.cookies['access_token_spotify'])
+    //   throw new ErrorApi('FAILED_SPOTIFY_AUTH', 'Échec de l\'authentification avec Spotify.', { status: 500 });
 
     // On supprime en cookies les tokens Spotify de l'utilisateur.
     res.clearCookie('access_token_spotify');

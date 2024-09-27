@@ -13,8 +13,7 @@ export async function getMistralBooks(tracks) {
     ${tracks}
     Propriété « books »: propose moi 20 livres en rapport avec le style de genre des musiques.
     Ajoute un « + » à chaque espaces pour les strings.
-    Retourne la totalité en un objet JSON sans texte supplémentaire.
-    Voici un exemple de format JSON:
+    Retourne la totalité en générant uniquement une sortie JSON sous ce format :
     {"association":[{"track": "musique","artist": "artiste","genre": "genre"}],"books":[{"titre": "titre","auteur": "auteur","genre": "genre"}]}
   `;
 
@@ -25,7 +24,7 @@ export async function getMistralBooks(tracks) {
     messages: [{role: 'user', content: input}],
   });
 
-  const contentParse = JSON.parse(content);
+  const contentParse = JSON.parse(cleanJSONResponse(content));
 
   const { books } = changeKeys.camelCase(contentParse, 3);
 
@@ -33,4 +32,15 @@ export async function getMistralBooks(tracks) {
     throw new ErrorApi('FAILED_GET_MISTAL_BOOKS', 'Échec dans la récupération des livres depuis l\'IA.', { status: 500 });
 
   return books;
+}
+
+function cleanJSONResponse(content) {
+  // Supprime les ```json au début et ``` en fin
+  if (content.startsWith("```json")) {
+    content = content.slice(7); // Supprime les premiers 7 caractères (```json)
+  }
+  if (content.endsWith("```")) {
+    content = content.slice(0, -3); // Supprime les 3 derniers caractères (```)
+  }
+  return content;
 }
